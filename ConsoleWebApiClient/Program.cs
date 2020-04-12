@@ -39,10 +39,11 @@ namespace ConsoleWebApiClient
         static void Main(string[] args)
         {
             Task.WhenAny(ProcessRepositories());
-            Task t =Task.CompletedTask;
             
-            
-           
+
+
+
+
             Console.ReadLine();
         }
        

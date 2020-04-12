@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "myConsoleApp", "myConsoleAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LambdaAsync", "..\LambdaAsync\LambdaAsync.csproj", "{9F033630-7E39-4919-BACA-364FA77B3D2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleWebApiClient", "ConsoleWebApiClient\ConsoleWebApiClient.csproj", "{84204478-CB93-4A09-9F28-7A6497E304A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleWebApiClient", "..\ConsoleWebApiClient\ConsoleWebApiClient.csproj", "{7EC05748-A6E6-491B-85AC-6FAC81D7CD06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{9F033630-7E39-4919-BACA-364FA77B3D2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F033630-7E39-4919-BACA-364FA77B3D2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F033630-7E39-4919-BACA-364FA77B3D2A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{84204478-CB93-4A09-9F28-7A6497E304A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84204478-CB93-4A09-9F28-7A6497E304A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84204478-CB93-4A09-9F28-7A6497E304A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84204478-CB93-4A09-9F28-7A6497E304A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EC05748-A6E6-491B-85AC-6FAC81D7CD06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EC05748-A6E6-491B-85AC-6FAC81D7CD06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EC05748-A6E6-491B-85AC-6FAC81D7CD06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EC05748-A6E6-491B-85AC-6FAC81D7CD06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

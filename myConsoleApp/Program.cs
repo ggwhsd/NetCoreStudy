@@ -9,20 +9,24 @@ namespace myConsoleApp
         
         static void Main(string[] args)
         {
+            //AsyncProgram.TestOne();
+            //AsyncProgram.TestWithContinue();
+            //AsyncProgram.Testpallral();
             /*
-              IndexStudy.Test();
-              IndexStudy.TestTwo();
-              IndexStudy.TestThree();
-              */
-            Lambda lam = new Lambda();
-            lam.Init();
-            lam.Search(6);
-            lam.TestDelegate();
-            lam.TestLambda();
+             Lambda lam = new Lambda();
+             lam.Init();
+             lam.Search(6);
+             lam.TestDelegate();
+             lam.TestLambda();
 
-            LinqUse lu = new LinqUse();
-            lu.TestOne();
+             LinqUse lu = new LinqUse();
+             lu.TestOne();
+             */
 
+            // TaskWait.TestTaskTwo();
+            //TaskWait.TestTaskThree_TimeOut();
+            //TaskWait.TestTaskAny();
+            TaskWait.TestTaskCancel();
             while (Console.ReadLine() != "stop")
             {
                 Console.WriteLine("继续输入");
