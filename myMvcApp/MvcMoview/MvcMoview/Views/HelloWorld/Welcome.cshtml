@@ -1,0 +1,17 @@
+﻿
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+<<h2>Welcome</h2>
+
+ <ul>
+     @for (int i = 0; i < (int)ViewData["NumTimes"]; i++)
+     {
+         <li>@ViewData["Message"]</li>
+     }
+
+
+    https://docs.microsoft.com/zh-cn/aspnet/core/tutorials/first-mvc-app/adding-view?view=aspnetcore-2.1&tabs=visual-studio
+ </ul>
+
