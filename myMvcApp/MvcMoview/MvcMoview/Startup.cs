@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using MvcMoview.Models;
 
 namespace MvcMoview
 {
@@ -32,6 +34,12 @@ namespace MvcMoview
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDbContext<MvcMoviewContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("MvcMoviewContext")));
+
+            
+                    
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

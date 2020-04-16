@@ -5,6 +5,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="dotnet-aspnet-codegenerator-design.dll" />
+    <None Remove="hostfxr.dll" />
+    <None Remove="hostpolicy.dll" />
+    <None Remove="Microsoft.CodeAnalysis.CSharp.Workspaces.dll" />
+    <None Remove="Microsoft.CodeAnalysis.Workspaces.dll" />
+    <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.Contracts.dll" />
+    <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.Core.dll" />
+    <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.dll" />
+    <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore.dll" />
+    <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.Templating.dll" />
+    <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.Utils.dll" />
+    <None Remove="Microsoft.VisualStudio.Web.CodeGenerators.Mvc.dll" />
+    <None Remove="MvcMoview.dll" />
+    <None Remove="MvcMoview.exe" />
+    <None Remove="MvcMoview.pdb" />
+    <None Remove="MvcMoview.Views.dll" />
+    <None Remove="MvcMoview.Views.pdb" />
+    <None Remove="NuGet.Frameworks.dll" />
+    <None Remove="System.Composition.AttributedModel.dll" />
+    <None Remove="System.Composition.Convention.dll" />
+    <None Remove="System.Composition.Hosting.dll" />
+    <None Remove="System.Composition.Runtime.dll" />
+    <None Remove="System.Composition.TypedParts.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
