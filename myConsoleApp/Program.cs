@@ -9,9 +9,9 @@ namespace myConsoleApp
         
         static void Main(string[] args)
         {
-            //AsyncProgram.TestOne();
-            //AsyncProgram.TestWithContinue();
-            //AsyncProgram.Testpallral();
+            AsyncTask.TestOne();
+            //AsyncTask.TestWithContinue();
+            //AsyncTask.Testpallral();
             /*
              Lambda lam = new Lambda();
              lam.Init();
@@ -23,6 +23,7 @@ namespace myConsoleApp
              lu.TestOne();
              */
 
+            // TaskWait.TestTaskOne();
             // TaskWait.TestTaskTwo();
             //TaskWait.TestTaskThree_TimeOut();
             //TaskWait.TestTaskAny();
