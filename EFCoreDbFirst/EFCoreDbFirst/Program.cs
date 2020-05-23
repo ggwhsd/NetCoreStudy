@@ -14,7 +14,7 @@ Install-Package MySql.Data.EntityFrameworkCore
 #这个没有安装 Install-Package MySql.Data.EntityFrameworkCore.Design
 
 #如下从数据库中生成对应的实体类
-Scaffold-DbContext  "server=localhost;port=3306;database=foxmm;user=root;password=gugw12121;" MySql.Data.EntityFrameworkCore  -OutputDir Models
+Scaffold-DbContext  "server=localhost;port=3306;database=;user=;password=;" MySql.Data.EntityFrameworkCore  -OutputDir Models
 #如下通过当前上下文，生成一个数据库迁移脚本，这样可以在空数据库环境中搭建新环境。
 dotnet ef migrations add InitDB  -c foxmmContext
 #生成对应的sql文件，这样可以按照sql方式更细数据库
