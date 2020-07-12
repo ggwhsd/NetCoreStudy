@@ -9,8 +9,8 @@ namespace myConsoleApp
         
         static void Main(string[] args)
         {
-            AsyncTask.TestOne();
-            //AsyncTask.TestWithContinue();
+            //AsyncTask.TestOne();
+            AsyncTask.TestWithContinue();
             //AsyncTask.Testpallral();
             /*
              Lambda lam = new Lambda();
@@ -27,7 +27,7 @@ namespace myConsoleApp
             // TaskWait.TestTaskTwo();
             //TaskWait.TestTaskThree_TimeOut();
             //TaskWait.TestTaskAny();
-            TaskWait.TestTaskCancel();
+            //TaskWait.TestTaskCancel();
             while (Console.ReadLine() != "stop")
             {
                 Console.WriteLine("继续输入");

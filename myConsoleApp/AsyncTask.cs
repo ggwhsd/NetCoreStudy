@@ -13,6 +13,7 @@ namespace myConsoleApp
         public static bool GetSomeThing(string a)
         {
             Thread.Sleep((new Random()).Next() % 10 * 1000);
+          
             i++;
             Console.WriteLine(DateTime.Now.ToLongTimeString() + "5-" + Thread.CurrentThread.ManagedThreadId.ToString());
             return true;
