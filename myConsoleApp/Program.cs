@@ -9,19 +9,33 @@ namespace myConsoleApp
         
         static void Main(string[] args)
         {
-            //AsyncTask.TestOne();
-            AsyncTask.TestWithContinue();
-            //AsyncTask.Testpallral();
-            /*
-             Lambda lam = new Lambda();
-             lam.Init();
-             lam.Search(6);
-             lam.TestDelegate();
-             lam.TestLambda();
+            IndexStudy.Test();
 
-             LinqUse lu = new LinqUse();
-             lu.TestOne();
-             */
+            Lambda lam = new Lambda();
+            lam.Init();
+            lam.Search(6);
+            lam.TestDelegate();
+            lam.TestLambda();
+            lam.TestLambda2();
+
+            LinqUse lu = new LinqUse();
+            lu.TestOne();
+
+            AsyncTask.ConsumeManyTime();
+            Console.WriteLine("按任意键继续");
+            Console.ReadLine();
+            AsyncTask.ContinueTaskWithConsumeManyTime();
+            Console.WriteLine("按任意键继续");
+            Console.ReadLine();
+            AsyncTask.TaskWhenConsumeManyTime();
+            Console.WriteLine("按任意键继续");
+            Console.ReadLine();
+            AsyncTask.TestOne();
+            //AsyncTask.TestWithContinue();
+            //AsyncTask.Testpallral();
+
+
+
 
             // TaskWait.TestTaskOne();
             // TaskWait.TestTaskTwo();
@@ -30,7 +44,7 @@ namespace myConsoleApp
             //TaskWait.TestTaskCancel();
             while (Console.ReadLine() != "stop")
             {
-                Console.WriteLine("继续输入");
+                Console.WriteLine("输入stop则退出222");
             }
 
         }

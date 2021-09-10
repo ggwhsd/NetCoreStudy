@@ -1,33 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using DateMeasurements =
-System.Collections.Generic.Dictionary<System.DateTime,int>;
+using DateMeasurements = System.Collections.Generic.Dictionary<System.DateTime,int>;
 using CityDataMeasurements =
     System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<System.DateTime, int>>;
+
 namespace myConsoleApp
 {
     class IndexStudy
     {
-        #region 字典方式使用
-        public class ArgsProcessor
-        {
-            private readonly ArgsActions actions;
+        
 
-            public ArgsProcessor(ArgsActions actions)
-            {
-                this.actions = actions;
-            }
-
-            public void Process(string[] args)
-            {
-                foreach (var arg in args)
-                {
-                    actions[arg]?.Invoke();
-                }
-            }
-
-        }
         public class ArgsActions
         {
             readonly private Dictionary<string, Action> argsActions = new Dictionary<string, Action>();
@@ -47,6 +30,26 @@ namespace myConsoleApp
                 argsActions[s] = a;
             }
         }
+
+        public class ArgsProcessor
+        {
+            private readonly ArgsActions actions;
+
+            public ArgsProcessor(ArgsActions actions)
+            {
+                this.actions = actions;
+            }
+
+            public void Process(string[] args)
+            {
+                foreach (var arg in args)
+                {
+                    actions[arg]?.Invoke();  //执行arg对应的委托
+                }
+            }
+
+        }
+        
         class DoAction {
             public void PrintAdd()
             {
@@ -59,6 +62,8 @@ namespace myConsoleApp
     }
         public static void  Test()
         {
+            //实际上就是一种表驱动编程方法的实践
+            Console.WriteLine("【委托的使用，字典的使用，以及[,]多维操作符的自定义】");
             ArgsActions aas = new ArgsActions();
             DoAction da = new DoAction();
             Action a1 = da.PrintAdd;
@@ -71,12 +76,13 @@ namespace myConsoleApp
 
            
         }
-        #endregion
 
-        #region 多维方式，示例1
+
+ //一个出名的分形算法
+ //演示循环迭代和数学计算
         public class Mandelbrot
         {
-            readonly private int maxIterations;
+             private readonly int maxIterations;
 
             public Mandelbrot(int maxIterations)
             {
@@ -103,7 +109,7 @@ namespace myConsoleApp
                 }
             }
         }
-        #endregion
+
 
 
         #region 多维方式，示例2
@@ -149,6 +155,7 @@ public class HistoricalWeatherData
 
     public static void TestTwo()
         {
+            Console.WriteLine("【Mandelbrot，数学公式，以及m[1,3]这种格式】");
             Mandelbrot m = new Mandelbrot(3);
             Console.WriteLine(m[1, 3].ToString());
             Console.WriteLine(m[0.001, 0.02].ToString());
@@ -159,6 +166,7 @@ public class HistoricalWeatherData
 
         public static void TestThree()
         {
+            Console.WriteLine("【字典、抛出异常、hw[\"City\",\"日期\"]】");
             HistoricalWeatherData hw = new HistoricalWeatherData();
             hw["Shanghai", DateTime.Now.AddDays(-1)] = 1;
             hw["Shanghai", DateTime.Now] = 2;

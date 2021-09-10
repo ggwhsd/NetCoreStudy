@@ -21,22 +21,21 @@ namespace myConsoleApp
         public void Init()
         {
             items = new List<Item>();
-            
-            items.Add(new Item(2));
-            items.Add(new Item(1));
-            items.Add(new Item(3));
-            items.Add(new Item(9));
-            items.Add(new Item(5));
-            items.Add(new Item(6));
-            items.Add(new Item(4));
-            items.Add(new Item(3));
+
+            int i = 0;
+            while (i < 10)
+            {
+                items.Add(new Item(i));
+                i++;
+            }
 
         }
 
         public void Search(int no)
         {
+            Console.WriteLine("【Linq的基础where使用】");
             //linq表达式语句，where作为条件
-            IEnumerable<Item> results = items.Where( (Item x)=> (x.NO<no));
+            IEnumerable<Item> results = items.Where( (Item x)=> (x.NO < no) );
             foreach (var i in results)
             {
                 Console.WriteLine($"item {i.NO}");
@@ -45,7 +44,8 @@ namespace myConsoleApp
 
         public void TestDelegate()
         {
-            Predicate<Item> p = new Predicate<Item>((x) => x.NO == 1);
+            Console.WriteLine("【委托类型Predicate的使用示例】");
+            Predicate<Item> p = new Predicate<Item>( (x) => x.NO == 1);
             IEnumerable<Item> results = items.FindAll(p);
             foreach (var i in results)
             {
@@ -54,6 +54,7 @@ namespace myConsoleApp
         }
         public void TestLambda()
         {
+            Console.WriteLine("【lambda的使用】");
             IEnumerable<Item> results = items.FindAll((Item x) => x.NO == 1);
             foreach (var i in results)
             {
@@ -63,9 +64,9 @@ namespace myConsoleApp
         //表达式lambda
         public void TestLambda2()
         {
+            Console.WriteLine("【委托类型Action、Fun结合lambda的使用】");
             Func<int, int> square = x => x * x;
             Console.WriteLine($"square 3 = { square(3)}");
-
 
             Action line = () => Console.WriteLine("   line null ");
 
@@ -78,6 +79,7 @@ namespace myConsoleApp
         //语句lambda
         public void TestLambda3()
         {
+            Console.WriteLine("【委托类型Action结合lambda的使用,lambda体为多行代码】");
             Action<string> greet = name =>
             {
                 string greeting = $"Hello {name}!";
