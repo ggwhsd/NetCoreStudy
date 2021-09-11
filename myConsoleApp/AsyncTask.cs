@@ -30,7 +30,10 @@ namespace myConsoleApp
 
 
 
-        //方式1：包装给调用方使用的方法，使用async修饰，因为里面有await。 调用方执行到await会立即返回，后续的内容不再直接调用， await之后的方法都会在可能在其他线程中使用，
+        ///<summary>
+        ///方式1：包装给调用方使用的方法，使用async修饰，因为里面有await。 调用方执行到await会立即返回，后续的内容不再直接调用，
+        ///await之后的方法都会在可能在其他线程中使用，
+        ///</summary>
         public async static void ConsumeManyTime()
         {
             Console.WriteLine("【简单的异步调用Task方法】");
@@ -38,21 +41,31 @@ namespace myConsoleApp
             bool result = await GetSomeThingAsync("test");
             Console.WriteLine(DateTime.Now.ToLongTimeString() + "【4-】 <" + Thread.CurrentThread.ManagedThreadId.ToString()+">");
         }
-        //方式2：这种调用方式是在异步执行完毕后，可以继续执行预定的后续函数，可以理解为一种回调机制。
+
+        /// <summary>
+        /// 方式2：这种调用方式是在异步任务执行完毕后，可以继续执行预定的后续函数，可以理解为一种回调机制。
+        /// ContinueWith中的函数会可能在其他线程中执行。
+        /// </summary>
         public static void ContinueTaskWithConsumeManyTime()
         {
             Console.WriteLine("【在异步t1执行后继续执行后续任务，t1.ContinueWith】");
             Task<bool> t1 = GetSomeThingAsync("test");
             t1.ContinueWith(t => { Console.WriteLine("after await finished " + t.Result + " <" + Thread.CurrentThread.ManagedThreadId.ToString() + "> " + i.ToString()); });
         }
-        //方式3：多任务等待方式
+        //方式3：
+
+        /// <summary>
+        /// 等待所有任务都执行完，再往下执行
+        /// 任务以及之后执行的代码都可能在不同的线程中。
+        /// </summary>
         public static async void TaskWhenConsumeManyTime()
         {
             Console.WriteLine("【在异步t1和t2都执行后继续执行后续任务，Task.WhenAll(t1,t2)】");
+            Console.WriteLine(DateTime.Now.ToLongTimeString() + "【1-】<" + Thread.CurrentThread.ManagedThreadId.ToString() + ">");
             Task<bool> t1 = GetSomeThingAsync("task1");
             Task<bool> t2 = GetSomeThingAsync("task2");
             await Task.WhenAll(t1, t2);
-            Console.WriteLine(DateTime.Now.ToLongTimeString() + "【6-】<" + Thread.CurrentThread.ManagedThreadId.ToString()+">");
+            Console.WriteLine(DateTime.Now.ToLongTimeString() + "【2-】<" + Thread.CurrentThread.ManagedThreadId.ToString()+">");
 
         }
 
@@ -73,6 +86,7 @@ namespace myConsoleApp
 
         public static void TestWithContinue()
         {
+            Console.WriteLine("【多次测试ContinueWith任务】");
             Console.WriteLine(DateTime.Now.ToLongTimeString() + "【1-】<" + Thread.CurrentThread.ManagedThreadId.ToString() + ">");
             ContinueTaskWithConsumeManyTime();
             ContinueTaskWithConsumeManyTime();
@@ -91,6 +105,7 @@ namespace myConsoleApp
 
         public static void TestWhen()
         {
+            Console.WriteLine("【多次测试WhenAll多个任务】");
             Console.WriteLine(DateTime.Now.ToLongTimeString() + "【1-】<" + Thread.CurrentThread.ManagedThreadId.ToString()+">");
             TaskWhenConsumeManyTime();
 
