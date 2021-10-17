@@ -32,4 +32,8 @@ dotnet run --project myConsoleApp
 
 ## 第一个web项目 
 
+## 串口项目
+* SerialConsole
 
+## 本地调用
+https://docs.microsoft.com/zh-cn/dotnet/standard/native-interop/pinvoke
