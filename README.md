@@ -182,8 +182,8 @@ class Program
 
 
 ## net core5的grpc server
-
-* 不依赖于asp.net core5的grpc模板，完全基于net core的空项目开始。
+[示例1](./grpcServerConsole/Program.cs)
+* 不依赖于asp.net core5的grpc模板，完全基于net core的空项目开始。以下方法也可以基于.net core的winform[示例2](./grpcServerWinForm/Program.cs)。
 
 nuget安装grpc.aspnetcore
 
@@ -270,6 +270,136 @@ namespace grpcServerConsole
 
 ```
 
+## net core5的signalR实时应用入门
+
+https://github.com/aspnet/SignalR-samples
+
+这个可以代替websocket进行快速搞笑的开发。
+步骤1: 创建一个asp.net core web项目
+步骤2：配置启用signalR以及配置对应路由路径,在startup.cs文件中配置。
+```
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+            }
+
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+
+                //2.添加signalR对应的hub，hub为signalR的应用
+                endpoints.MapHub<ChatHub>("/chatHub");
+            });
+            
+           
+        }
+```
+
+步骤3：新建Hubs目录，新建ChatHub类，如下，
+```
+using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace SignalRChat.Hubs
+{
+    //3. 创建signalR的一个应用示例，一定要继承Hub
+    public class ChatHub : Hub
+    {
+        public async Task SendMessage(string user, string message)
+        {
+            await Clients.All.SendAsync("ReceiveMessage", user, message);
+        }
+    }
+}
+
+```
+步骤4：准备对应的客户端signalr.js。这个后续其他项目就可以直接拷贝了，不用每次都这么安装。
+1. 在“解决方案资源管理器”中，右键单击项目，然后选择“添加”>“客户端库” 。
+2. 在“添加客户端库”对话框中，对于“提供程序”，选择“unpkg”。
+3. 对于“库”，输入 @microsoft/signalr@latest。
+4. 选择“选择特定文件”，展开“dist/browser”文件夹，然后选择“signalr.js”和“signalr.min.js”。
+5. 将“目标位置”设置为 wwwroot/js/signalr/，然后选择“安装”。
+
+步骤5：编写wwwroot/js/chat.js，用于页面使用
+```
+var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+//Disable send button until connection is established
+document.getElementById("sendButton").disabled = true;
+
+connection.on("ReceiveMessage", function (user, message) {
+    var li = document.createElement("li");
+    document.getElementById("messagesList").appendChild(li);
+    // We can assign user-supplied strings to an element's textContent because it
+    // is not interpreted as markup. If you're assigning in any other way, you 
+    // should be aware of possible script injection concerns.
+    li.textContent = `${user} says ${message}`;
+});
+
+connection.start().then(function () {
+    document.getElementById("sendButton").disabled = false;
+}).catch(function (err) {
+    return console.error(err.toString());
+});
+
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    var user = document.getElementById("userInput").value;
+    var message = document.getElementById("messageInput").value;
+    connection.invoke("SendMessage", user, message).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+```
+
+步骤6：添加Razor页面，Pages/index1.cshtml
+```
+@page
+<div class="container">
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-2">User</div>
+        <div class="col-4"><input type="text" id="userInput" /></div>
+    </div>
+    <div class="row">
+        <div class="col-2">Message</div>
+        <div class="col-4"><input type="text" id="messageInput" /></div>
+    </div>
+    <div class="row">&nbsp;</div>
+    <div class="row">
+        <div class="col-6">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <ul id="messagesList"></ul>
+    </div>
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
+```
 
 
 ## 串口项目

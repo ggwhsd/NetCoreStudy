@@ -23,10 +23,18 @@ namespace gRPCClient
             Console.WriteLine("Greeting: " + reply.Message);
 
             await Task.Delay(2000);
-            var client2 = new Welcomer.WelcomerClient(channel);
-            var reply2 = await client2.SayHelloAsync(
-                              new HelloRequestW { Name = "WelcomeClient" });
-            Console.WriteLine("Greeting: " + reply2.Message);
+            try
+            {
+                var client2 = new Welcomer.WelcomerClient(channel);
+                var reply2 = await client2.SayHelloAsync(
+                                  new HelloRequestW { Name = "WelcomeClient" });
+                Console.WriteLine("Greeting: " + reply2.Message);
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("exception" + err.StackTrace + " \r\n "+err.Message);
+            }
+            
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();

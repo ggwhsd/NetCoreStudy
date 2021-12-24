@@ -1,37 +1,42 @@
-﻿using grpcServerConsole.Services;
-using GrpcService1;
+﻿using GreetService;
+using grpcServerWinForm.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using Grpc.AspNetCore;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using System.Windows.Forms;
 
-namespace grpcServerConsole
+namespace grpcServerWinForm
 {
-    class Program
+    public partial class Form1 : Form
     {
-        public static void Main(string[] args)
+        public Form1()
         {
-            
-           
-            Console.WriteLine("Hello World!");
-
-            var d = Greeter.BindService(new GreeterService());
-            CreateHostBuilder(args).Build().Run();
+            InitializeComponent();
         }
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
+
+        private async void button1_Click(object sender, EventArgs e)
         {
-            webBuilder.UseStartup<Startup>();
-        });
+            var d = Greeter.BindService(new GreeterService());
+            Task.Run(new Action(CreateHostBuilder(null).Build().Run));
+        }
+
+        public  IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
+
+
     }
 
     class Startup
@@ -56,7 +61,7 @@ namespace grpcServerConsole
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<GreeterService>();
-               
+
 
                 endpoints.MapGet("/", async context =>
                 {
