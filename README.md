@@ -274,7 +274,7 @@ namespace grpcServerConsole
 
 https://github.com/aspnet/SignalR-samples
 
-这个可以代替websocket进行快速搞笑的开发。
+这个可以代替websocket进行快速的开发。[示例1](./SignalRChat/Startup.cs)
 步骤1: 创建一个asp.net core web项目
 步骤2：配置启用signalR以及配置对应路由路径,在startup.cs文件中配置。
 ```
@@ -400,6 +400,91 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>
 ```
+# signalR入门2：组管理和组调用
+
+可以对每个客户端连接，将其分类到不同自定义的组中，这样可以方便进行组内消息广播发送。
+1. 添加组。在chatHub中添加方法
+```
+/// <summary>
+        /// 继承实现该方法，可以在客户端连接成功时调用
+        /// </summary>
+        /// <returns></returns>
+        public override async Task OnConnectedAsync()
+        {
+             //获取当前连接的connectionId，将其加入组“SignalR Users”中。
+            if(DateTime.Now.Second%2==0)
+                await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
+            await base.OnConnectedAsync();
+        }
+		/// <summary>
+        /// 断开连接时，需要移出组
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <returns></returns>
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, "SignalR Users");
+            await base.OnDisconnectedAsync(exception);
+        }
+```
+2. 服务器端对于组内的消息进行调用。
+```
+ public async Task SendMessage(string user, string message)
+{
+   //对所有接入这个Hub的客户端进行发送消息
+	//await Clients.All.SendAsync("ReceiveMessage", user, message + DateTime.Now.ToLongTimeString());
+	//对组内的客户端进行发送消息
+	await Clients.Group("SignalR Users").SendAsync("ReceiveMessage", user, message + " Group " + DateTime.Now.ToLongTimeString());
+	//只发送给调用者
+	//await Clients.Caller.SendAsync("ReceiveMessage ",user, message + " caller " +DateTime.Now.ToLongTimeString());
+}
+```
+# signalR入门3：从控制器中访问Hub
+
+之前两个例子都是从Hub自己调用中进行处理发送消息给客户端，即都是由客户端的一个请求触发。如果我们需要写有服务器端根据不同的情况主动推送消息，则需要能够从Hub外部调用才可以。
+
+这里使用控制器来处理，通过依赖注入方式。
+
+1. 启用mvc路由，（.NET 5的配置方式）
+```
+app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+
+                //2.添加signalR对应的hub，hub为signalR的应用
+                endpoints.MapHub<ChatHub>("/chatHub");
+
+                // 添加mvc路由配置
+                endpoints.MapControllerRoute(
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
+            });
+```
+
+2. 添加控制器
+
+```
+public class HomeController : Controller
+    {
+        private readonly IHubContext<ChatHub> _hubContext;
+
+        public HomeController(IHubContext<ChatHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            await _hubContext.Clients.All.SendAsync("ReceiveMessage"," HomeController " , $"Home page loaded at: {DateTime.Now}");
+            return View();
+        }
+    }
+```
+
+3. 测试
+
+输入 http://localhost:5000/Home, 则在index1中会显示"HomeController says Home page loaded at: 2021/12/25 17:49:36"
+
 
 
 ## 串口项目

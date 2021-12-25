@@ -27,6 +27,12 @@ namespace SignalRChat
 
             //1.添加SignalR启用配置
             services.AddSignalR();
+
+           
+
+            
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,9 +59,18 @@ namespace SignalRChat
 
                 //2.添加signalR对应的hub，hub为signalR的应用
                 endpoints.MapHub<ChatHub>("/chatHub");
+
+                // 添加mvc路由配置
+                endpoints.MapControllerRoute(
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
             });
-            
+
+
+
            
+
+
         }
     }
 }
