@@ -436,7 +436,7 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 	//对组内的客户端进行发送消息
 	await Clients.Group("SignalR Users").SendAsync("ReceiveMessage", user, message + " Group " + DateTime.Now.ToLongTimeString());
 	//只发送给调用者
-	//await Clients.Caller.SendAsync("ReceiveMessage ",user, message + " caller " +DateTime.Now.ToLongTimeString());
+	//await Clients.Caller.SendAsync("ReceiveMessage",user, message + " caller " +DateTime.Now.ToLongTimeString());
 }
 ```
 # signalR入门3：从控制器中访问Hub
@@ -484,6 +484,33 @@ public class HomeController : Controller
 3. 测试
 
 输入 http://localhost:5000/Home, 则在index1中会显示"HomeController says Home page loaded at: 2021/12/25 17:49:36"
+
+
+# signalR入门4：Hub添加多个请求方法
+
+1. 在ChatHub中添加如下方法
+```
+public async Task SendCallerMessage(string user, string message)
+        {
+            //只发送给调用者
+            await Clients.Caller.SendAsync("ReceiveMessage",user, message + " caller " +DateTime.Now.ToLongTimeString());
+        }
+```
+
+2. 在chat.js中添加如下代码
+```
+document.getElementById("sendButton2").addEventListener("click", function (event) {
+    var user = document.getElementById("userInput").value;
+    var message = document.getElementById("messageInput").value;
+    connection.invoke("SendCallerMessage", user, message).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
+```
+
+3. 在index1.cshtml中添加一个id为sendButton2的按钮即可。
 
 
 

@@ -9,9 +9,19 @@ connection.on("ReceiveMessage", function (user, message) {
     // We can assign user-supplied strings to an element's textContent because it
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
-    li.textContent = `${user} says ${message}`;
+    li.textContent = `ReceiveMessage ${user} says ${message}`;
 });
 
+
+connection.on("ReceiveMessage2", function (user, message) {
+    var li = document.createElement("li");
+    document.getElementById("messagesList").appendChild(li);
+    // We can assign user-supplied strings to an element's textContent because it
+    // is not interpreted as markup. If you're assigning in any other way, you 
+    // should be aware of possible script injection concerns.
+    li.textContent = `ReceiveMessage2 ${user} says ${message}`;
+    li.style.color = "green";
+});
 
 
 
@@ -33,8 +43,18 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 document.getElementById("sendButton2").addEventListener("click", function (event) {
     var user = document.getElementById("userInput").value;
     var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessageToCaller", user, message).catch(function (err) {
+    connection.invoke("SendCallerMessage", user, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
 });
+
+document.getElementById("sendButton3").addEventListener("click", function (event) {
+    var user = document.getElementById("userInput").value;
+    var message = document.getElementById("messageInput").value;
+    connection.invoke("SendMessage2", user, message).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+

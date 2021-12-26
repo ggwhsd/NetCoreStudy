@@ -17,17 +17,31 @@ namespace SignalRChat.Hubs
             //对组内的客户端进行发送消息
             await Clients.Group("SignalR Users").SendAsync("ReceiveMessage", user, message + " Group " + DateTime.Now.ToLongTimeString());
             //只发送给调用者
-            //await Clients.Caller.SendAsync("ReceiveMessage ",user, message + " caller " +DateTime.Now.ToLongTimeString());
+            //await Clients.Caller.SendAsync("ReceiveMessage",user, message + " caller " +DateTime.Now.ToLongTimeString());
+        }
+
+        
+        public async Task SendCallerMessage(string user, string message)
+        {
+            //只发送给调用者
+            await Clients.Caller.SendAsync("ReceiveMessage",user, message + " caller " +DateTime.Now.ToLongTimeString());
+        }
+
+        public async Task SendMessage2(string user, string message)
+        {
+            //只发送给调用者
+            await Clients.Caller.SendAsync("ReceiveMessage2", user, message + " caller " + DateTime.Now.ToLongTimeString());
         }
 
 
-        
+
         /// <summary>
         /// 继承实现该方法，可以在客户端连接成功时调用
         /// </summary>
         /// <returns></returns>
         public override async Task OnConnectedAsync()
         {
+            Console.WriteLine(Context.UserIdentifier);
             //获取当前连接的connectionId，将其加入组“SignalR Users”中。
             if(DateTime.Now.Second%2==0)
                 await Groups.AddToGroupAsync(Context.ConnectionId, "SignalR Users");
@@ -40,6 +54,7 @@ namespace SignalRChat.Hubs
         /// <returns></returns>
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, "SignalR Users");
             await base.OnDisconnectedAsync(exception);
         }
