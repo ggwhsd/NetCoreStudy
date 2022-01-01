@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppRazor", "WebAppRazor.csproj", "{C580CDDF-12BB-4ABB-AD5F-AA6D8B3321F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVCMovie", "..\MVCMovie\MVCMovie.csproj", "{3DF69AC3-3C5C-44E3-A446-E89342936A8C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C580CDDF-12BB-4ABB-AD5F-AA6D8B3321F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C580CDDF-12BB-4ABB-AD5F-AA6D8B3321F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C580CDDF-12BB-4ABB-AD5F-AA6D8B3321F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C580CDDF-12BB-4ABB-AD5F-AA6D8B3321F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DF69AC3-3C5C-44E3-A446-E89342936A8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DF69AC3-3C5C-44E3-A446-E89342936A8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DF69AC3-3C5C-44E3-A446-E89342936A8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DF69AC3-3C5C-44E3-A446-E89342936A8C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CBCDBD01-B3B6-4444-BCC4-74BADA55E9AD}
+	EndGlobalSection
+EndGlobal

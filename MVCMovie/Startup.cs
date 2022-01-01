@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +20,26 @@ namespace MVCMovie
             Configuration = configuration;
         }
 
+        public const string CookieScheme = "YourSchemeName";
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            
+            services.AddAuthentication(CookieScheme) // Sets the default scheme to cookies
+            .AddCookie(CookieScheme, options =>
+            {
+                options.AccessDeniedPath = "/account/denied";
+                options.LoginPath = "/account/login";
+            });
+
+            // Example of how to customize a particular instance of cookie options and
+            // is able to also use other services.
+            services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureMyCookie>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,7 +60,9 @@ namespace MVCMovie
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {

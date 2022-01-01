@@ -2,7 +2,82 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
+
+
 <div class="text-center">
     <h1 class="display-4">WelcomeWelcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+<p>
+    参考 https://www.cnblogs.com/savorboard/p/aspnetcore-identity.html 这篇文章。<br />
+
+    <label style="color:burlywood;Background:blue">Claims ：</label> 证件单元，比如身份证中的姓名、性别等这些类别。所以有个类型ClaimsType里面定义了很多默认的类型。<br /> <br />
+
+    <label style="color:burlywood;Background:blue">ClaimsIdentity：</label>包含两部分，
+    <ol>
+        <li>. 证件单元信息，一个字典类型，包含很多证件单元。</li>
+        <li>. 身份证类型 AuthenticationType，用于说明该身份证的用途，就如同每个公司的员工证件都只是该公司的门禁卡。</li>
+    </ol>
+
+
+    <i>注意：Name和AuthenticationType两个属性是创建时赋值，后续不可更改。这样子才符合证件的基本安全要求。</i><br /> <br />
+
+    IIdentity: 这是一个接口，用于约束身份证中的信息。 既然涉及数据，一般都涉及数据的约束信息，比如员工号，那么必然会涉及员工号的有效范围等约束。
+    <label style="color:burlywood;Background:blue">ClaimsIdentity继承IIdentity。</label> <br />
+    <br />
+
+    到此，数据也有了，接口约束也有了，这才符合一个面向对象设计。
+
+
+
+
+
+
+</p>
+
+<p>
+    正常情况下，一个人可以有多个身份，比如老师、父母等等，因此需要有一个载体去装载这些身份，这个就是 <b>ClaimsPrincipal</b> 。
+
+    接下来，还有一个问题，就是该身份证属于哪个角色，就是IPrincipal这个接口。
+</p>
+
+<p>
+    AuthenticationManager 这个是验证管理员，用于验证上述身份的。
+
+    但是验证也会有几种方法，比如通过人脸识别验证，或者对比身份证和其他证件指纹等。
+
+    这就是AuthenticationScheme。
+
+    AuthenticationManager 有四个方法：
+    <ol>
+        <li>
+            AuthenticateAsync() : 验证身份。
+        </li>
+        <li>
+            ChallengeAsync(): 握手，这其实就是一个问答过程，里面应该会调用验证身份。
+        </li>
+        <li>
+            SignInAsync，SignOutAsync: 登入，登出。登入的时候要进行握手验证，登出的时候要取消验证。
+        </li>
+    </ol>
+
+</p>
+
+<p>
+    如上AuthenticationManager 都是采用默认的认证方法和框架，那么自定义认证方法，接口IAuthenticationHandler。
+
+    这个在DefaultAuthenticationManager中可以看到。
+
+    抽象类AuthenticationHandler继承了IAuthenticationHandler接口，所以后续自定义实现就继承AuthenticationHandler这个抽象类就可以。
+
+    可以通过框架中的CookieAuthentication里的CookieAuthenticationHandler中的HandleAuthenticateAsync方法。
+
+    HandleSignInAsync 身份验证，组装一个Cookie票据信息，登入上下文，并且附加到Http的header中，回复给客户端浏览器。
+
+
+</p>
+
+

@@ -513,6 +513,59 @@ document.getElementById("sendButton2").addEventListener("click", function (event
 3. 在index1.cshtml中添加一个id为sendButton2的按钮即可。
 
 
+## MVC框架中，添加了cookie的验证功能
+
+1. 在startup.cs中启用 app.UseAuthentication();
+2. 在startup.cs中,添加cookie的配置
+```
+public const string CookieScheme = "YourSchemeName";
+
+ public void ConfigureServices(IServiceCollection services){
+
+...
+
+
+services.AddAuthentication(CookieScheme) // Sets the default scheme to cookies
+            .AddCookie(CookieScheme, options =>
+            {
+                options.AccessDeniedPath = "/account/denied";
+                options.LoginPath = "/account/login";
+            });
+
+            // Example of how to customize a particular instance of cookie options and
+            // is able to also use other services.
+            services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureMyCookie>();
+
+}
+```
+
+3. 在HomeController中添加方法，并在方法上添加 Authorize 表示该action需要验证。
+
+```
+ [Authorize]
+        public IActionResult MyClaims()
+        {
+            return View();
+        }
+```
+4. 添加具体验证控制器AccountController.cs，核心代码如下
+```
+//先验证登录用户密码，若正确，则创建cookie票据，后续操作就无需再输入用户密码了。
+if (ValidateLogin(userName, password))
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim("user", userName),
+                    new Claim("role", "Member")
+                };
+                var authProperties = new AuthenticationProperties();
+                authProperties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1);
+                await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "role")), authProperties);
+
+
+```
+
+5. 添加对应试图，Home/MyClaims.cshtml， Account/Login.cshtml, Account/AccessDenied.cshtml
 
 ## 串口项目
 * SerialConsole
