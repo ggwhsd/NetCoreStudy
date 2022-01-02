@@ -1,0 +1,58 @@
+﻿@{
+   // ViewData["Title"] = "Home Page";
+}
+
+
+<p>  @ViewData["Message"] </p>
+
+<p>  通过构造函数的方式依赖注入，生命周期为AddSingleton </p>
+<p>
+    <ol>
+        <li>
+            新建接口IDateTime
+        </li>
+        <li>
+            新建SystemDateTime实现IDateTime
+        </li>
+        <li>
+            在startup.cs中ConfigureServices，进行注册，说明自定义服务的生命周期，以及引入方式等。
+            services.AddSingleton<IDateTime, SystemDateTime>();
+        </li>
+        <li>
+            在Home控制器中引入依赖IDateTime的服务注册，
+            添加 <br />
+            private readonly IDateTime _dateTime;
+            public HomeController(ILogger<HomeController>
+                logger, IDateTime dateTime)
+                {
+                _logger = logger;
+                _dateTime = dateTime;  //构造函数方式进行依赖注入
+                }
+        </li>
+        <li>
+            添加控制器请求方法，
+            public IActionResult DIservices()
+            {
+            var serverTime = _dateTime.Now;
+            if (serverTime.Hour < 12)
+            {
+            ViewData["Message"] = "It's morning here - Good Morning!";
+            }
+            else if (serverTime.Hour < 17)
+            {
+            ViewData["Message"] = "It's afternoon here - Good Afternoon!";
+            }
+            else
+            {
+            ViewData["Message"] = "It's evening here - Good Evening!";
+            }
+
+            return View();
+            }
+        </li>
+        <li>
+            新建DIservices试图，
+            <p>  @@ ViewData["Message"] </p>
+        </li>
+    </ol>
+</p>

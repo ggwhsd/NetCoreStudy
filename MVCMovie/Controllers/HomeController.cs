@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MVCMovie.Models;
+using MVCMovie.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,9 +15,12 @@ namespace MVCMovie.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IDateTime _dateTime;
+
+        public HomeController(ILogger<HomeController> logger, IDateTime dateTime)
         {
             _logger = logger;
+            _dateTime = dateTime;  //构造函数方式进行依赖注入
         }
 
         [Authorize]
@@ -40,6 +44,25 @@ namespace MVCMovie.Controllers
         [Authorize]
         public IActionResult MyClaims()
         {
+            return View();
+        }
+
+        public IActionResult DIservices()
+        {
+            var serverTime = _dateTime.Now;
+            if (serverTime.Hour < 12)
+            {
+                ViewData["Message"] = "It's morning here - Good Morning!";
+            }
+            else if (serverTime.Hour < 17)
+            {
+                ViewData["Message"] = "It's afternoon here - Good Afternoon!";
+            }
+            else
+            {
+                ViewData["Message"] = "It's evening here - Good Evening!";
+            }
+           
             return View();
         }
     }

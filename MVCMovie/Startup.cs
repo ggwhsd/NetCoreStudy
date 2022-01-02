@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using MVCMovie.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +40,10 @@ namespace MVCMovie
             // Example of how to customize a particular instance of cookie options and
             // is able to also use other services.
             services.AddSingleton<IConfigureOptions<CookieAuthenticationOptions>, ConfigureMyCookie>();
-            
+
+            //注册自定义的服务
+            services.AddSingleton<IDateTime, SystemDateTime>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
