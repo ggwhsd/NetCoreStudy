@@ -25,7 +25,7 @@ namespace MVCMovie.Controllers
         }
 
         // GET: /HelloWorld/Echo?name=ddd&numTimes=1 
-
+        
         public string Echo(string name, int numTimes = 1)
         {
             return HtmlEncoder.Default.Encode($"Hello {name}, NumTimes is: {numTimes}");

@@ -567,6 +567,30 @@ if (ValidateLogin(userName, password))
 
 5. 添加对应试图，Home/MyClaims.cshtml， Account/Login.cshtml, Account/AccessDenied.cshtml
 
+## MVC框架中，使用restful api（也叫web api）
+
+1. 添加restful api的类： 右键项目，添加新项->api控制器(空)，取名ValuesController
+2. 双击ValuesController.cs文件，添加第一个方法如下，第一行表示请求路径，即/api/Values，第一个方法Get，表示默认Get /api/Values 请求。
+[Authorize]可以使用验证，web api也是可以使用和web中一样的验证。
+```
+[Route("api/[controller]")]
+    [ApiController]
+    public class ValuesController : ControllerBase
+    {
+        // Get /api/values
+        [HttpGet]
+        [Authorize]
+        public ActionResult<IEnumerable<string>> Get()
+        {
+            return new string[] { "value1","value2" };
+        }
+    }
+```
+3. restful 常用几种请求方法和路径，添加如下几个方法示例。
+```
+
+```
+
 ## 串口项目
 * SerialConsole
 
