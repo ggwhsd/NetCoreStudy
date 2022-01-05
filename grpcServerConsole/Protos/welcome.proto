@@ -7,7 +7,15 @@ package welcome;
 // The greeting service definition.
 service Welcomer {
   // Sends a greeting
+  // Unary : 一个请求 -> 一个回复
   rpc SayHello (HelloRequestW) returns (HelloReplyW);
+  // Server streaming : 一个请求 -> 数次回复
+  rpc SayHelloServerStream (HelloRequestW) returns (stream  HelloReplyW);
+  // Client streaming : 多个请求 -> 一次回复
+  rpc SayHelloClientStream (stream HelloRequestW) returns (  HelloReplyW);
+  // 双向 streaming : 多个请求 <-> 多次回复
+  rpc SayHelloBiStream (stream HelloRequestW) returns (stream  HelloReplyW);
+
 }
 
 // The request message containing the user's name.

@@ -180,6 +180,23 @@ class Program
     }
 ```
 
+* grpc有四种服务，分别可以在Proto文件下，通过如下定义：
+
+```
+// The greeting service definition.
+service Welcomer {
+  // Sends a greeting
+  // Unary : 一个请求 -> 一个回复
+  rpc SayHello (HelloRequestW) returns (HelloReplyW);
+  // Server streaming : 一个请求 -> 数次回复
+  rpc SayHelloServerStream (HelloRequestW) return (stream  HelloReplyW);
+  // Client streaming : 多个请求 -> 一次回复
+  rpc SayHelloServerStream (HelloRequestW) return (stream  HelloReplyW);
+  // 双向 streaming : 多个请求 <-> 多次回复
+  rpc SayHelloServerStream (stream HelloRequestW) return (stream  HelloReplyW);
+
+}
+```
 
 ## net core5的grpc server
 [示例1](./grpcServerConsole/Program.cs)

@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using GrpcGreeter.Services;
 
 namespace grpcServerConsole
 {
@@ -24,7 +25,8 @@ namespace grpcServerConsole
            
             Console.WriteLine("Hello World!");
 
-            var d = Greeter.BindService(new GreeterService());
+            //var d = Greeter.BindService(new GreeterService());
+            //Welcomer.BindService(new WelcomeService());
             CreateHostBuilder(args).Build().Run();
         }
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -56,7 +58,7 @@ namespace grpcServerConsole
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<GreeterService>();
-               
+                endpoints.MapGrpcService<WelcomeService>();
 
                 endpoints.MapGet("/", async context =>
                 {
