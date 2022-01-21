@@ -30,6 +30,10 @@ dotnet run --project myConsoleApp
   重点对Task这个类进行的演示，Task的几种创建方式，Task可以获取其ID，也可以给控制任务顺序，Task也是可以当作同步使用的。
 同时对task的异常捕获，cancel操作等做了示例。
 
+* myConsoleApp/DataModelStudy.cs
+
+对于record类型的示例。C# 10新增的类型。
+
 ## 第一个web项目 
 
 ## aspnet core5的grpc server
@@ -603,10 +607,10 @@ if (ValidateLogin(userName, password))
         }
     }
 ```
-3. restful 常用几种请求方法和路径，添加如下几个方法示例。
-```
+3. restful 常用几种请求方法和路径，添加如下几个方法示例。 具体看代码。
 
-```
+## 
+
 
 ## 串口项目
 * SerialConsole

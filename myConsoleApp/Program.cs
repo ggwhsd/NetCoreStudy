@@ -9,6 +9,7 @@ namespace myConsoleApp
         
         static void Main(string[] args)
         {
+            /*
             IndexStudy.Test();
 
             Lambda lam = new Lambda();
@@ -19,7 +20,7 @@ namespace myConsoleApp
             lam.TestLambda2();
 
             LinqUse lu = new LinqUse();
-            lu.TestOne();
+            lu.TestOne();*/
 
             /*AsyncTask.ConsumeManyTime();
             Console.WriteLine("按任意键继续");
@@ -41,6 +42,11 @@ namespace myConsoleApp
             TaskWait.TestTaskThree_TimeOut();
             TaskWait.TestTaskAny();
             TaskWait.TestTaskCancel();*/
+
+            DataModelStudy dataModel = new DataModelStudy();
+            dataModel.createRecord();
+            dataModel.equalRecords();
+            dataModel.withRecord();
 
             while (Console.ReadLine() != "stop")
             {
