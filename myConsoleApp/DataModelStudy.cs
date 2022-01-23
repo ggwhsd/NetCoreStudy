@@ -47,7 +47,67 @@ namespace myConsoleApp
             Console.WriteLine(p);
             Console.WriteLine(p2);
         }
+
+        /// <summary>
+        /// anonymous types 是一种快捷的使用类对象的方式，就如同lambda函数一样，无需声明类类型，直接由编译器生成，对一些只读数据类型的对象进行包装定义。
+        /// 创建方式跟类对象一样，也是需要使用new，只是后面无需类名。
+        /// 匿名对象的ToString方法默认行为也是输出类似 Key-Value样式的数据，跟record类似。
+        /// </summary>
+        public void anonymousTypesOne()
+        {
+            Console.WriteLine("创建一个匿名对象，包含两个成员:");
+            var anonymousObject = new { Name = "One", Age = 12 };
+            Console.WriteLine($"匿名对象的Name {anonymousObject.Name} Age:{anonymousObject.Age}");
+            // var anonymousObject2 = anonymousObject with { Name = "Two" };  // C# 10才支持with 匿名， 9只支持with record
+            Console.WriteLine(anonymousObject);
+
+
+            Console.WriteLine("创建一个由匿名对象组成的匿名数组:");
+            var array = new[] { new { Name = "One", Age = 12 }, new { Name = "Two", Age = 13 } };
+            foreach (var a in array)
+            {
+                Console.WriteLine(a);
+            }
+        }
+
+        /// <summary>
+        /// 匿名对象的一个常用场所就是Linq，因为Linq结果很多时候都是根据应用选择不同的字段，而且多数时候都只读数据，所以采用匿名类进行操作会方便很多。
+        /// 
+        /// </summary>
+        public void anonymousTypesLinq()
+        {
+
+           
+            List<Person> persons = new List<Person>();
+            int i = 100;
+            while (i > 0)
+            {
+                persons.Add(new Person("鲁班 " + i.ToString() + " 号", i) { city = "城市 " + i.ToString()+" 号"});
+                i--;
+            }
+
+            //使用匿名对象进行操作，免去了重新创建的过程.
+            //只从person对象中取出两个字段，而不是所有字段。
+            var queryResults = from p in persons
+                               where (p.age < 10 && p.age>3)
+                                   //select new { NameNew = p.name, AgeNew = p.age };  //可以创建新的属性名
+                               select new { p.name, p.age } ;  //使用默认属性名，
+            
+            foreach (var v in queryResults)
+            {
+                Console.WriteLine(v);
+            }
+
+            persons.Add(new Person("鲁班 5 号 插班生", 5));
+            //linq语法是定义不会执行，每次调用时才会去执行查询，所以这里还会继续重新查询，而不是用上次的结果。
+            foreach (var v in queryResults)
+            {
+                Console.WriteLine(v);
+            }
+
+        }
     }
+
 
 
     /// <summary>

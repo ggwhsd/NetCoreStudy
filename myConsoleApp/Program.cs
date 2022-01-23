@@ -47,6 +47,8 @@ namespace myConsoleApp
             dataModel.createRecord();
             dataModel.equalRecords();
             dataModel.withRecord();
+            dataModel.anonymousTypesOne();
+            dataModel.anonymousTypesLinq();
 
             while (Console.ReadLine() != "stop")
             {

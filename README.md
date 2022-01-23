@@ -32,7 +32,7 @@ dotnet run --project myConsoleApp
 
 * myConsoleApp/DataModelStudy.cs
 
-对于record类型的示例。C# 10新增的类型。
+对于record类型的示例,C# 9开始新增的类型。.NET5默认是C# 9。  匿名类的使用。 with关键字的使用。
 
 ## 第一个web项目 
 
