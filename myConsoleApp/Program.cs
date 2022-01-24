@@ -44,11 +44,13 @@ namespace myConsoleApp
             TaskWait.TestTaskCancel();*/
 
             DataModelStudy dataModel = new DataModelStudy();
-            dataModel.createRecord();
+            /*dataModel.createRecord();
             dataModel.equalRecords();
             dataModel.withRecord();
             dataModel.anonymousTypesOne();
-            dataModel.anonymousTypesLinq();
+            dataModel.anonymousTypesLinq();*/
+
+            dataModel.TupleOne();
 
             while (Console.ReadLine() != "stop")
             {

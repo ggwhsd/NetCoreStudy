@@ -34,6 +34,11 @@ dotnet run --project myConsoleApp
 
 对于record类型的示例,C# 9开始新增的类型。.NET5默认是C# 9。  匿名类的使用。 with关键字的使用。
 
+弃元的使用，元组和deconstruct方法的组合使用。
+
+
+
+
 ## 第一个web项目 
 
 ## aspnet core5的grpc server

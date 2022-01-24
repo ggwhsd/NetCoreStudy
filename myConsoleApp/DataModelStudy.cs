@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace myConsoleApp
     /// record 是c# 10才有的类型，一般用于用于不可更改的数据使用场所，多用于方便进行值相等，使用Equals或者==会比较里面每个属性都相等，则认为相等，这是与class的主要差别。
     /// struct 是一个简单的数据类型，用于存储数据，可修改数据，不能继承。
     /// </summary>
-    class DataModelStudy
+    public class DataModelStudy
     {
         public void createRecord()
         {
@@ -106,6 +107,77 @@ namespace myConsoleApp
             }
 
         }
+        /// <summary>
+        /// 元组,一种方便快捷的数据类型，无需声明结构，即可立即使用。
+        /// 元组中的属性都是可以修改值的，并不是只读，这点和其他某类编程语言不大一样。
+        /// </summary>
+        public void TupleOne()
+        {
+            Random rnd = new Random();
+            //第一种场景：直接赋值
+            var results = (1, 2, 3, "Name","Time");  // 等价于 var ( Item1,  Item2,  Item3,  Item4,  Item5)
+            Console.WriteLine(results);
+            Console.WriteLine(results.Item1 + "," + results.Item2 + "," + results.Item3);
+
+            //第二种场景：函数返回元组
+            results = GetTupleDataOne(rnd);
+            results.Item2 = 3;
+            Console.WriteLine(results);
+
+            //第三种场景：逐个字段命名
+            (int i1, int i2, int i3, string name, string time) = GetTupleDataOne(rnd);
+            Console.WriteLine($"{i1} {i2} {i3} {name} {time}");
+            i1 = i2 = i3 = 10;
+            //第四种场景：已有变量
+            string Name, Time;
+            (i1, i2, i3, Name, Time) = GetTupleDataOne(rnd);
+            Console.WriteLine($"{i1} {i2} {i3} {name} {Time}");
+
+            //第五种场景：遇到弃元，虽然元组返回多个数据，但是我只想要其中某两个的时候，可以使用这种。
+            (_,_,_,Name, Time) = GetTupleDataOne(rnd);
+            Console.WriteLine($"{i1} {i2} {i3} {name} {Time}");
+
+            //第六种场景：对于类对象，也可以方便的获取其成员变成元组数据，这里使用Deconstruct方法。这样后续使用该功能的时候，就不用主动明显的调用方法。
+            var p = new PersonEx("A1", "B1", "C1", "D1", "G1");
+
+            // 调用Deconstruct方法，快速获取p的数据，并赋值到元组上。
+            var (fName, lName, city, state) = p;
+            var (fName1, lName1) = p;
+            Console.WriteLine($" {fName} {lName}  {city} {state}");
+
+
+            //第七种场景：可以声明Deconstruct为静态类的静态函数，第一个参数为需要处理的对象类型。以下功能依赖于ReflectionExtensions的Deconstruct方法。
+            Type dateType = typeof(DateTime);
+            PropertyInfo prop = dateType.GetProperty("Now");
+            var (isStatic, isRO, isIndexed, propType) = prop;
+            Console.WriteLine($"\nThe {dateType.FullName}.{prop.Name} property:");
+            Console.WriteLine($"   PropertyType: {propType.Name}");
+            Console.WriteLine($"   Static:       {isStatic}");
+            Console.WriteLine($"   Read-only:    {isRO}");
+            Console.WriteLine($"   Indexed:      {isIndexed}");
+            Type listType = typeof(List<>);
+            prop = listType.GetProperty("Item",BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            var (hasGetAndSet, sameAccess, accessibility, getAccessibility, setAccessibility) = prop;
+            Console.Write($"\nAccessibility of the {listType.FullName}.{prop.Name} property: ");
+
+            if (!hasGetAndSet | sameAccess)
+            {
+                Console.WriteLine(accessibility);
+            }
+            else
+            {
+                Console.WriteLine($"\n   The get accessor: {getAccessibility}");
+                Console.WriteLine($"   The set accessor: {setAccessibility}");
+            }
+
+        }
+
+        private (int, int, int, string, string) GetTupleDataOne(Random rnd)
+        {
+            return (1, 1, 1, "One", (rnd).Next(1, 1000).ToString());
+        }
+
+
     }
 
 
@@ -127,5 +199,131 @@ namespace myConsoleApp
         public string[] schools { get; init; }
     }
 
+
+    /// <summary>
+    /// 微软网站上的示例
+    /// </summary>
+    public static class ReflectionExtensions
+    {
+        public static void Deconstruct(this PropertyInfo p, out bool isStatic,
+                                   out bool isReadOnly, out bool isIndexed,
+                                   out Type propertyType)
+        {
+            var getter = p.GetMethod;
+
+            // Is the property read-only?
+            isReadOnly = !p.CanWrite;
+
+            // Is the property instance or static?
+            isStatic = getter.IsStatic;
+
+            // Is the property indexed?
+            isIndexed = p.GetIndexParameters().Length > 0;
+
+            // Get the property type.
+            propertyType = p.PropertyType;
+        }
+
+        public static void Deconstruct(this PropertyInfo p, out bool hasGetAndSet,
+                                   out bool sameAccess, out string access,
+                                   out string getAccess, out string setAccess)
+        {
+            hasGetAndSet = sameAccess = false;
+            string getAccessTemp = null;
+            string setAccessTemp = null;
+
+            MethodInfo getter = null;
+            if (p.CanRead)
+                getter = p.GetMethod;
+
+            MethodInfo setter = null;
+            if (p.CanWrite)
+                setter = p.SetMethod;
+
+            if (setter != null && getter != null)
+                hasGetAndSet = true;
+
+            if (getter != null)
+            {
+                if (getter.IsPublic)
+                    getAccessTemp = "public";
+                else if (getter.IsPrivate)
+                    getAccessTemp = "private";
+                else if (getter.IsAssembly)
+                    getAccessTemp = "internal";
+                else if (getter.IsFamily)
+                    getAccessTemp = "protected";
+                else if (getter.IsFamilyOrAssembly)
+                    getAccessTemp = "protected internal";
+            }
+
+            if (setter != null)
+            {
+                if (setter.IsPublic)
+                    setAccessTemp = "public";
+                else if (setter.IsPrivate)
+                    setAccessTemp = "private";
+                else if (setter.IsAssembly)
+                    setAccessTemp = "internal";
+                else if (setter.IsFamily)
+                    setAccessTemp = "protected";
+                else if (setter.IsFamilyOrAssembly)
+                    setAccessTemp = "protected internal";
+            }
+
+            // Are the accessibility of the getter and setter the same?
+            if (setAccessTemp == getAccessTemp)
+            {
+                sameAccess = true;
+                access = getAccessTemp;
+                getAccess = setAccess = String.Empty;
+            }
+            else
+            {
+                access = null;
+                getAccess = getAccessTemp;
+                setAccess = setAccessTemp;
+            }
+        }
+    }
+
+    class PersonEx
+    {
+        public string N1 { get; set; }
+        public string N2 { get; set; }
+        public string N3 { get; set; }
+        public string C1 { get; set; }
+        public string S1 { get; set; }
+        public PersonEx(string n1, string n2, string n3,
+                  string c1, string s1)
+        {
+            N1 = n1;
+            N2 = n2;
+            N3 = n3;
+            C1 = c1;
+            S1 = s1;
+        }
+        // Return the first and last name.
+        public void Deconstruct(out string n1, out string n3)
+        {
+            n1 = N1;
+            n3 = N3;
+        }
+        public void Deconstruct(out string n1, out string n2, out string n3)
+        {
+            n1 = N1;
+            n2 = N2;
+            n3 = N3;
+        }
+        public void Deconstruct(out string n1, out string n3,
+                          out string c1, out string s1)
+        {
+            n1 = N1;
+            n3 = N3;
+            c1 = C1;
+            s1 = S1;
+        }
+
+    }
 
 }
