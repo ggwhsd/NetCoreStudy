@@ -174,6 +174,7 @@ namespace myConsoleApp
 
         private (int, int, int, string, string) GetTupleDataOne(Random rnd)
         {
+            
             return (1, 1, 1, "One", (rnd).Next(1, 1000).ToString());
         }
 
