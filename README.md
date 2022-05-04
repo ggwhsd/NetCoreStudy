@@ -41,6 +41,14 @@ dotnet run --project myConsoleApp
 
 ## 第一个web项目 
 
+[示例](./WebAppRazor/Startup.cs)
+该项目的目的有两个：
+1、是学习各个基础的组件的概念，以及基本用法。比如主机、依赖注入、中间件、服务器、配置、环境、日志、路由、静态文件等。
+2、学习aspnetcore的组件化开发概念，通过各种组件的可插拔方式，做到满足日常的灵活搭配。
+
+
+
+
 ## aspnet core5的grpc server
 [示例](./GrpcService1/Startup.cs)
 

@@ -9,6 +9,29 @@
     <p>RazorPage: 一个快速使用的单页web框架，比MVC简单很多</p>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
-    
+    <p>
+    aspnetcore框架，最简单的也包含启动配置，服务配置，依赖注入，请求中间件，主机这几个组件。
+    </p
+<p>
+    【主机】：
+    封装了一个Http服务器、中间件组件、日志、依赖注入服务、配置。主机分为通用型和aspnetcore web型，后者为向后兼容保留，因为之前的版本用这种方式。我们没有历史包袱，就直接使用通用型主机。
+
+</p>
+    <p>
+        【http服务器】:
+        负责监听http端口，将请求处理为一个HttpContext，传递给中间件处理。
+    </p>
+    <p>
+        【配置】：
+        内置提供的配置服务，可以读取json、xml、环境变量以及命令行参数。默认读取文件为appsetting.json。
+    </p>
+    <p>
+        【执行环境】：
+        这个主要是方便管理开发环境、测试环境、生产环境而使用的。
+    </p>
+    <p>
+        【日志】：
+        提供了一个内置的日志<a href="LoggingIndex">点击查看</a>，也可以扩展使用第三方日志。
+    </p>
 </div>
 
