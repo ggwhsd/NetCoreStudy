@@ -33,5 +33,78 @@
         【日志】：
         提供了一个内置的日志<a href="LoggingIndex">点击查看</a>，也可以扩展使用第三方日志。
     </p>
+    <p>
+        【路由】：
+        a route is a url pattern that mapped to a handler. 
+        A handler is typically a Razor page, an action method in an MVC controller, or a middleware.
+    </p>
+    <p>
+        【错误】
+        内置了错误处理页面，比如页面找不到之后的错误提示页面，开发环境下的一些异常错误提示页面。
+    </p>
+    <p>
+        【发送http请求】
+        还提供了 httpClient客户端组件，用于方便发起http request到其他web服务器。
+    </p>
+    <p style="text-align:center">
+        【内容根目录】Content root
+        a base path for :
+
+        <ul style="margin-left:120px;">
+            <li>exe程序</li>
+            <li>dll</li>
+            <li>
+                内容文件
+                <ul>
+                    <li>.razor文件,.cshtml文件</li>
+                    <li>.json、.xml配置文件</li>
+                    <li>数据文件如.db</li>
+                    <li>web根目录，如wwwroot文件夹</li>
+                </ul>
+            </li>
+        </ul>
+    </p>
+    <p>
+        【web根目录】
+        web root is the base path for public , static resource files, such as : <em>.css, .js, .png, .jpg</em>.
+        默认情况下，静态文件只在webroot目录以及其子目录下，也就是 {content root}/wwwroot以及其子目录下可以被访问到。
+        在razor文件中，<em>~/</em>表示 web root。
+</p>
+
+</div>
+<hr />
+<div>
+    <p>
+        【Startup】：use Startup class by convention. 但是实际上改为其他名字也是可以的。如果不用Startup类，而是直接在创建主机时进行配置也是可以的。<br />
+        第一种添加方式:通过扩展方式添加。<br />
+        自定义一个request pipeline middle: RequestSetOptionsMiddleware。<br/>
+        自定义一个Configure: RequestSetOptionsStartupFilter，该StartupFilter用于扩展Startup中的Configure方法，在该类中通过builder.UseMiddleware<RequestSetOptionsMiddleware>
+    ()方式添加中间件。
+        <br />将RequestSetOptionsStartupFilter添加到服务中。在Startup的ConfigureServices中添加，从而程序启动的时候才会处理这个StartupFilter，从而进一步执行添加中间件的操作<br/>
+        services.AddTransient<IStartupFilter, RequestSetOptionsStartupFilter>();
+        <br/>
+        第二种添加方式，直接添加。具体参看中间件<br />
+
+</p>
+
+    <p>
+        【中间件】:
+        Middleware is software that's assembled into an app pipeline to handle requests and responses.
+        中间件既可以处理请求也可以处理回复。同时还可以在下一个中间件处理前和处理完成后进行当前中间件自己的操作处理，比如日志，性能分析。
+        the following diagram demonstrates the concept.<br />
+        <img src="~/png/request-delegate-pipeline.png" />
+        都是通过RequestDelegate来进行配置中间件的管道调用方式。每个RequestDelegate可以通过use(),map()以及use扩展方法。<br />
+        除了单独创建一个中间件类，还可以使用如in-line as an anonymous method的方式添加中间件。<br />
+        Each middleware component in the request pipeline is responsible for invoking the next component in the pipeline or short-circuiting the pipeline.
+        <br />
+        use方式添加的in-line的中间件，startup.cs中的Configure方法做了更改，代码如图<br />
+        <img src="~/png/middlewareInLine.png">
+        <br />
+        此处，用了日志注入，输出日志结果如图<br />
+        <img src="~/png/middlewareInLineResult.png">
+
+        https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0
+
+    </p>
 </div>
 

@@ -37,5 +37,7 @@ namespace WebAppRazor
                     //UseStartup是一个扩展方法，
                     webBuilder.UseStartup<Startup>();
                 });
+
+   
     }
 }
