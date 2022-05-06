@@ -9,45 +9,64 @@
     <p>RazorPage: 一个快速使用的单页web框架，比MVC简单很多</p>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
+    <h1>aspnetcore的组件概要</h1>
     <p>
-    aspnetcore框架，最简单的也包含启动配置，服务配置，依赖注入，请求中间件，主机这几个组件。
-    </p
-<p>
-    【主机】：
-    封装了一个Http服务器、中间件组件、日志、依赖注入服务、配置。主机分为通用型和aspnetcore web型，后者为向后兼容保留，因为之前的版本用这种方式。我们没有历史包袱，就直接使用通用型主机。
 
-</p>
+        aspnetcore框架，最简单的也包含启动配置，服务配置，依赖注入，请求中间件，主机这几个组件。
+    </p>
     <p>
-        【http服务器】:
+
+        <h2>【主机】</h2>：
+        封装了一个Http服务器、中间件组件、日志、依赖注入服务、配置。主机分为通用型和aspnetcore web型，后者为向后兼容保留，因为之前的版本用这种方式。我们没有历史包袱，就直接使用通用型主机。
+
+    </p>
+    <p>
+        <h2>
+            【http服务器】
+        </h2>:
         负责监听http端口，将请求处理为一个HttpContext，传递给中间件处理。
     </p>
     <p>
-        【配置】：
+        <h2>
+            【配置】
+        </h2>:
         内置提供的配置服务，可以读取json、xml、环境变量以及命令行参数。默认读取文件为appsetting.json。
     </p>
     <p>
-        【执行环境】：
+        <h2>
+            【执行环境】
+        </h2>:
         这个主要是方便管理开发环境、测试环境、生产环境而使用的。
     </p>
     <p>
-        【日志】：
+        <h2>
+            【日志】
+        </h2>:
         提供了一个内置的日志<a href="LoggingIndex">点击查看</a>，也可以扩展使用第三方日志。
     </p>
     <p>
-        【路由】：
-        a route is a url pattern that mapped to a handler. 
+        <h2>
+            【路由】
+        </h2>:
+        a route is a url pattern that mapped to a handler.
         A handler is typically a Razor page, an action method in an MVC controller, or a middleware.
     </p>
     <p>
-        【错误】
+        <h2>
+            【错误】
+        </h2>:
         内置了错误处理页面，比如页面找不到之后的错误提示页面，开发环境下的一些异常错误提示页面。
     </p>
     <p>
-        【发送http请求】
+        <h2>
+            【发送http请求】
+        </h2>:
         还提供了 httpClient客户端组件，用于方便发起http request到其他web服务器。
     </p>
     <p style="text-align:center">
-        【内容根目录】Content root
+        <h2>
+            【内容根目录】Content root
+        </h2>:
         a base path for :
 
         <ul style="margin-left:120px;">
@@ -65,17 +84,21 @@
         </ul>
     </p>
     <p>
-        【web根目录】
+        <h2>
+            【web根目录】
+        </h2>:
         web root is the base path for public , static resource files, such as : <em>.css, .js, .png, .jpg</em>.
         默认情况下，静态文件只在webroot目录以及其子目录下，也就是 {content root}/wwwroot以及其子目录下可以被访问到。
         在razor文件中，<em>~/</em>表示 web root。
-</p>
+    </p>
 
 </div>
 <hr />
+<h1>aspnetcore的组件代码略微介绍</h1>
 <div>
     <p>
-        【Startup】：use Startup class by convention. 但是实际上改为其他名字也是可以的。如果不用Startup类，而是直接在创建主机时进行配置也是可以的。<br />
+        <h2>【启动配置Startup】</h2>
+        ：use Startup class by convention. 但是实际上改为其他名字也是可以的。如果不用Startup类，而是直接在创建主机时进行配置也是可以的。<br />
         第一种添加方式:通过扩展方式添加。<br />
         自定义一个request pipeline middle: RequestSetOptionsMiddleware。<br/>
         自定义一个Configure: RequestSetOptionsStartupFilter，该StartupFilter用于扩展Startup中的Configure方法，在该类中通过builder.UseMiddleware<RequestSetOptionsMiddleware>
@@ -88,7 +111,8 @@
 </p>
 
     <p>
-        【中间件】:
+        <h2>【中间件】</h2>:
+
         Middleware is software that's assembled into an app pipeline to handle requests and responses.
         中间件既可以处理请求也可以处理回复。同时还可以在下一个中间件处理前和处理完成后进行当前中间件自己的操作处理，比如日志，性能分析。
         the following diagram demonstrates the concept.<br />
@@ -103,8 +127,42 @@
         此处，用了日志注入，输出日志结果如图<br />
         <img src="~/png/middlewareInLineResult.png">
 
+        <h3>【中间件顺序问题】</h3>
+        默认顺序如下
+        <img src="~/png/middleware-pipeline.svg">
+        <br />
+        我们按照如下举例说明常用中间件：<br />
+        <img src="~/png/middleOrders.png" />
         https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0
+        如下可以实现静态资源压缩缓存的功能。
+        <pre>
+                app.UseResponseCaching();
+                app.UseResponseCompression();
+                app.UseStaticFiles();
+            </pre>
+        内置的中间件的说明：<br />
+        https://docs.microsoft.com/en-us/aspnet/core/fundamentals/middleware/?view=aspnetcore-5.0#built-in-middleware-1
 
+    </p>
+
+    <p>
+        【主机】
+        注册一个服务，用于在主机启动和停止时做一些日志输出的操作。
+        LifetimeEventsHostedService.cs。
+
+        在注册服务(依赖注入)时，有一个服务类型生命周期的概念，我个人理解为何时创建注入的对象，不表示何时销毁。临时的、Scope、单例三种。
+        临时:表示每次在需要依赖注入的时候，都是创建一个新的对象。
+        Scope：表示在一段范围内用创建一个，比如每一次request，从接收时都会创建一个，后续所有中间件都是用这一个。
+        单例：全局只有一个，只创建一次，这个最好立即。
+        虽然服务依赖注入时用的表明为临时的，但是如果某个单例类中保存了对于某个临时创建的依赖的引用，并且后续并不需要再次依赖，则该临时创建的对象将一直保留在系统中。
+    </p>
+    <p>
+        【环境】通过IWebHostEnvironment env可以注入环境相关信息，示例在Start.Configuration中。
+
+    </p>
+    <p>
+        【配置】<a href="./configShow">ConfigShow.cshtml</a>中示例。
+        后续内容都放到上面导航栏了，不然页面太多内容也没啥意思。知识得有组织的习得和实践。
     </p>
 </div>
 

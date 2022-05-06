@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppRazor.Middles;
+using WebAppRazor.Services;
 
 namespace WebAppRazor
 {
@@ -25,15 +26,20 @@ namespace WebAppRazor
         }
 
         public IConfiguration Configuration { get; }
-   
+        private static ILogger<Startup> _logger;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+           
             // 在执行这行代码前，已经有两百多个服务加入进去了。
             services.AddRazorPages();
+            //相当于又添加了一个Startup.configure
             services.AddTransient<IStartupFilter,
                       RequestSetOptionsStartupFilter>();
+            services.AddTransient<IHostedService, LifetimeEventsHostedService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,10 +48,13 @@ namespace WebAppRazor
         /// </summary>
         /// <param name="app"></param>
         /// <param name="env"></param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> _logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
+            _logger = logger;
 
+            //使用use可以进行简单的处理。
 
+            #region Use添加中间件
             ////use方法1：用了Use的扩展方法，加入中间件，需要通过invoke调用下一个中间件，同时如果用到await，则需要用async
             //app.Use(async (context, next) =>
             //{
@@ -63,7 +72,7 @@ namespace WebAppRazor
             //             await next.Invoke(c);
             //             _logger.LogInformation("Hello from 2nd delegate. end ");
             //         };
-                  
+
             //    }
             //    );
 
@@ -80,7 +89,22 @@ namespace WebAppRazor
 
             //});
 
-         
+            //return;
+            #endregion
+
+            #region map方式添加
+            /*
+            app.Map("/map1", HandleMapTest1);
+              
+            app.Map("/mapPageExample/map", HandleMultiSeg);
+            //url进行映射调用的中间件，后续中间件不会执行了，因为在map中间件中没有调用后续的中间件。
+          
+            app.MapWhen(context => context.Request.Query.ContainsKey("branch"),
+                              HandleBranch);
+          
+            return;
+              */
+            #endregion
 
             if (env.IsDevelopment())
             {
@@ -102,6 +126,43 @@ namespace WebAppRazor
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+            });
+
+
+            #region 获取配置
+            _logger.LogInformation($"{env.ApplicationName} {env.EnvironmentName}");
+            _logger.LogInformation($"{env.ContentRootPath}");
+            _logger.LogInformation($"{env.WebRootPath}");
+            _logger.LogInformation($"{env.WebRootFileProvider.ToString()}");
+            _logger.LogInformation($"开发环境:{env.IsDevelopment()}");
+            #endregion
+        }
+
+        private static void HandleMapTest1(IApplicationBuilder app)
+        {
+            //在这个中间件中未调用后续的，所以走这条路的请求到这就结束了。
+            app.Run(async context =>
+            {
+                await context.Response.WriteAsync("Map Test 1");
+            });
+        }
+        private static void HandleMultiSeg(IApplicationBuilder app)
+        {
+            app.Use(async (context, next) =>
+                   {
+                       _logger.LogInformation(" HandleMultiSeg执行了map操作，看看是否执行网页访问 ");
+                       
+                    }
+                );
+
+            
+            }
+        private static void HandleBranch(IApplicationBuilder app)
+        {
+            app.Run(async context =>
+            {
+                var branchVer = context.Request.Query["branch"];
+                await context.Response.WriteAsync($"Branch used = {branchVer}");
             });
         }
 
