@@ -65,6 +65,72 @@
     @ViewData["MyEnv1"]
     <br />操作系统的Path变量:
     @ViewData["Path"]
+    <br/>可以通过如下方式简单的输出所有符合key-value方式的配置信息到控制台上，包括命令行参数。微软文档上说这是一个在Debug时候，容易查看配置问题的方式。
+    <img src="~/png/configurationVariableKeyValue.png" />
+</p>
+<p>
+    命令行参数
+    <br />
+    如果参数是类似如下3种的key-value形式都是可以被配置类解析为key value的方式的。否则只能是普通的字符串数组了。
+    dotnet run MyKey="Using =" Position:Title=Cmd Position:Name=Cmd_Rick
+    <br />
+    dotnet run /MyKey "Using /" /Position:Title=Cmd /Position:Name=Cmd_Rick
+    <br />
+    dotnet run --MyKey "Using --" --Position:Title=Cmd --Position:Name=Cmd_Rick
+    <br />
+    命令行参数有一个mapping功能，比如假如 dotnet run -k1 keyOne 与 dotnet run key1=keyOne是相等的，则在Startup.cs种添加如下代码
+    <pre>
+                    var switchMappings = new Dictionary<string, string>()
+                         {
+                             { "-k1", "key1" },
+                             { "-k2", "key2" },
+                             { "--k3", "key3" },
+                             { "--k4", "key4" },
+                             { "--k5", "key5" },
+                             { "--k6", "key6" },
+                         };
+
+                        configHost.AddCommandLine(args, switchMappings); 
+</pre>
+    在配置里面会读到 key1=KeyOne
+
+</p>
+<p>
+    Kestrel endpoint configuration.
+    可以通过如下几种方式，也是按照如下顺序加载，所以最后一个会覆盖前面的同名配置:
+    <ol>
+        <li>
+            appsetting.json，appsetting.Development.json中
+            <pre>
+                "Kestrel": {
+                    "Endpoints": {
+                      "Http": {
+                        "Url": "https://localhost:8888"
+                      }
+                    }
+                  }
+            </pre>
+        </li>
+        <li>
+            环境变量配置 ASPNETCORE_URLS，或者 set Kestrel__Endpoints__Https__Url=https://localhost:8888
+        </li>
+        <li>
+            命令行 --url="http://localhost:7777"
+        </li>
+        <li>
+            自定义添加的json配置,hostsetting.json，<b>要在ConfigureAppConfiguration()方法中配置才能被web服务器检测到</b>
+            <pre>
+                "Kestrel": {
+                    "Endpoints": {
+                      "Http": {
+                        "Url": "https://localhost:9999"
+                      }
+                    }
+                  }
+            </pre>
+        </li>
+        
+    </ol>
 </p>
 <br />
     https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0#environment-variables-1
