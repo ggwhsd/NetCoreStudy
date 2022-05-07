@@ -19,10 +19,14 @@ namespace WebAppRazor
     /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// 依赖注入获取到配置类，说明在调用Startup类的方法时，配置类已经加载了，所以ConfigureServices中无法再修改配置类的类似默认程序路径、json文件路径，如果需要添加，必须再Program中添加。
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
+            
         }
 
         public IConfiguration Configuration { get; }
@@ -32,7 +36,10 @@ namespace WebAppRazor
         public void ConfigureServices(IServiceCollection services)
         {
 
-           
+            //在服务中注册配置,如果有很多配置需要读入，则可以通过扩展方法的方式将这些配置到集中到一个类文件中
+           services.Configure<Configuration.PositionOptions>(Configuration.GetSection(WebAppRazor.Configuration.PositionOptions.Position));
+            //自定义的扩展方法
+            services.AddMyConfig(Configuration);
             // 在执行这行代码前，已经有两百多个服务加入进去了。
             services.AddRazorPages();
             //相当于又添加了一个Startup.configure
@@ -129,7 +136,8 @@ namespace WebAppRazor
             });
 
 
-            #region 获取配置
+            #region 获环境配置
+            
             _logger.LogInformation($"{env.ApplicationName} {env.EnvironmentName}");
             _logger.LogInformation($"{env.ContentRootPath}");
             _logger.LogInformation($"{env.WebRootPath}");

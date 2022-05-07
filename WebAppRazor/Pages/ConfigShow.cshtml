@@ -4,8 +4,67 @@
 }
 
 <p>
-@ViewData["Message"]
-    </p>
+    @ViewData["Message"]
+</p>
 <p>
+    方法1：最直接的读取配置方法，适合简单参数读取配置文件中的配置，比如appsetting.json、appsetting.Development.json
     @ViewData["Setting"]
 </p>
+<p>
+    方法2：options pattern -> bind,更为高效的读取参数方法，将参数与类进行映射绑定。此处成为 options pattern
+    @ViewData["Options Pattern1"]
+</p>
+<p>
+    方法3：options pattern -> get,是方法2的一个更常用的写法，从这一点上，可以看出，这些程序编写人员在一步步求进的，让使用者越来越方便。
+    @ViewData["Options Pattern2"]
+</p>
+
+<p>
+    方法4：options pattern -> 依赖注入
+    ,在Startup.cs的ConfigureService中添加,services.Configure<PositionOptions>
+        (Configuration.GetSection(PositionOptions.Position));
+        在依赖构造函数中通过类似 IOptions<PositionOptions>
+            options的方式就可以获取到这个配置。<br />
+            @ViewData["Options Pattern3"]
+
+</p>
+<p>
+    针对方法4，如果有很多的配置类，可以使用扩展方法的方式更有利于管理和代码整洁。比如项目中的MyConfigServiceCollectionExtensions。
+    注意命名空间要改为 Microsoft.Extensions.DependencyInjection，这样vs2019的intellisense就可以提示到该类方法。
+    然后在startup类ConfigureServices方法中就可以通过services使用扩展方法了。
+    //自定义的扩展方法
+    services.AddMyConfig(Configuration);
+
+</p>
+<p>
+    <b>对于涉及【安全】的配置信息</b><br />
+    <ol>
+        <li>
+            不把密码等敏感信息放在代码中或者配置文件中。
+        </li>
+        <li>
+            在非生产环境中不适用生产环境的敏感信息配置。
+        </li>
+        <li>
+            敏感信息配置不能配置项目中，以免提交到仓库里面。
+        </li>
+    </ol>
+
+</p>
+
+<p>
+    环境变量
+    windows下，使用命令行 set 表示临时性，只对当前进程，setx表示永久性，/M表示对系统，否则对当前用户。
+    set MyKey="My key from Environment".<br />
+    再vs2019中，可以通过调试->调试属性方式添加临时的环境变量
+    <img src="~/png/environment1.png" />
+    <br />
+    aspnetcore开发环境下的默认环境变量名:
+    @ViewData["ASPNETCORE_ENVIRONMENT"]
+    <br />自定义的环境变量:
+    @ViewData["MyEnv1"]
+    <br />操作系统的Path变量:
+    @ViewData["Path"]
+</p>
+<br />
+    https://docs.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-5.0#environment-variables-1
