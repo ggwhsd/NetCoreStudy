@@ -8,4 +8,12 @@
 <div class="text-center">
     <h1 class="display-4">Welcome </h1>
    <p> @ViewData["Message"]</p>
+    <pre>默认内置的日志模块只能记录到控制台、debug、EventLog和WindowsEvent。没有文件日志，需要通过第三方支持</pre>、
+    此处以log4Net注入方式使用。
+    <pre>
+        注入类 services.AddSingleton<MyLog4NetService>();同时要添加一个log4net.config的配置文件。
+        顺带写了个注入泛型方式的示例。
+            services.AddTransient(typeof(TemplateServiceInterface<>), typeof(TemplateService<>));
+
+     </pre>
 </div>

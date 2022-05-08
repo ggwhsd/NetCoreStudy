@@ -41,9 +41,15 @@ namespace WebAppRazor
         /// <returns></returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
 
-        
+
     // ConfigureWebHostDefaults方法用于配置主机，参数为一个委托。委托里面具体实现了各种配置，包括可用组件以及添加服务。
-    Host.CreateDefaultBuilder(args).ConfigureHostConfiguration(
+    Host.CreateDefaultBuilder(args).ConfigureLogging(
+                                    (configLogging) => {
+                                        configLogging.ClearProviders(); //清楚所有日志输出
+                                        configLogging.AddConsole(); //只输出到控制台
+
+                                    })
+            .ConfigureHostConfiguration(
                 configHost =>
                     {
                         

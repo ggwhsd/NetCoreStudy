@@ -1,0 +1,26 @@
+﻿@page
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
+@model WebAppRazor.Pages.AboutModel
+@{
+}
+
+
+
+当前服务器时间:@Model.Message
+
+<p> ASPNETCORE_ENVIRONMENT = @hostingEnv.EnvironmentName</p>
+
+<p>通过如下environment标签可以进行根据环境显示不同的页面信息</p>
+<environment include="Development">
+    <div>The effective Development tag is: </div>
+</environment>
+<environment exclude="Development">
+    <div>The effective unDevelopment tag is: </div>
+</environment>
+<environment include="Staging,Development,Staging_2">
+    <div>
+        The effective Staging,Development,Staging_2 tag is:
+        
+    </div>
+</environment>
+

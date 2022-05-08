@@ -1,10 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using log4net;
+using log4net.Config;
+using log4net.Repository;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppRazor.Configuration;
+using WebAppRazor.Services;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -17,5 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
             //services.Configure<PositionOptions>(config.GetSection(WebAppRazor.Configuration.PositionOptions.Position));
             return services;
         }
+
+      
     }
 }

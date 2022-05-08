@@ -35,9 +35,9 @@ namespace WebAppRazor
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddSingleton<MyLog4NetService>();
             //在服务中注册配置,如果有很多配置需要读入，则可以通过扩展方法的方式将这些配置到集中到一个类文件中
-           services.Configure<Configuration.PositionOptions>(Configuration.GetSection(WebAppRazor.Configuration.PositionOptions.Position));
+            services.Configure<Configuration.PositionOptions>(Configuration.GetSection(WebAppRazor.Configuration.PositionOptions.Position));
             //自定义的扩展方法
             services.AddMyConfig(Configuration);
             // 在执行这行代码前，已经有两百多个服务加入进去了。
@@ -46,6 +46,8 @@ namespace WebAppRazor
             services.AddTransient<IStartupFilter,
                       RequestSetOptionsStartupFilter>();
             services.AddTransient<IHostedService, LifetimeEventsHostedService>();
+            //注入泛型
+            services.AddTransient(typeof(TemplateServiceInterface<>), typeof(TemplateService<>));
 
         }
 

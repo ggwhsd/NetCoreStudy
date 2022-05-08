@@ -157,7 +157,13 @@
         虽然服务依赖注入时用的表明为临时的，但是如果某个单例类中保存了对于某个临时创建的依赖的引用，并且后续并不需要再次依赖，则该临时创建的对象将一直保留在系统中。
     </p>
     <p>
+        <pre>
         【环境】通过IWebHostEnvironment env可以注入环境相关信息，示例在Start.Configuration中。
+        比如EnvironmentName。 框架默认环境一般分为三类:Development，Staging，Productiong。对应开发、用户验证测试、生产三个环境。
+        当然，我们可以根据自己的环境来进行新增和删除。
+        设置不同的环境是方便管理不同环境下的配置。
+        环境信息默认从环境变量 DOTNET_ENVIRONMENT和ASPNETCORE_ENVIRONMENT（如果使用了web）中获取，且 ASPNETCORE_ENVIRONMENT会覆盖 DOTNET_ENVIRONMENT的信息。
+</pre>
 
     </p>
     <p>
