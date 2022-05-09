@@ -9,13 +9,15 @@ namespace WebAppRazor.Pages
 {
     public class AboutModel : PageModel
     {
-        public String Message;
+        //每个请求scope范围内都会创建一个新的AboutModel模型，
+        public String Message = DateTime.Now.ToLongTimeString();
 
 
 
         public void OnGet()
         {
-            Message = DateTime.Now.ToLongTimeString();
+            
+            //Message = DateTime.Now.ToLongTimeString();
         }
     }
 }

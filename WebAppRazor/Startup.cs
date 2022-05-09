@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAppRazor.Middles;
 using WebAppRazor.Services;
+using WebAppRazor.Utils;
 
 namespace WebAppRazor
 {
@@ -113,6 +114,8 @@ namespace WebAppRazor
           
             return;
               */
+
+
             #endregion
 
             if (env.IsDevelopment())
@@ -129,12 +132,51 @@ namespace WebAppRazor
 
             //启动路由，在整个http request的pipeline中合适的位置加入了路由点，结合UseEndpoings具体路由方式，
             app.UseRouting();
+            app.Use(next => async context =>
+            {
+                string clientIP = context.Connection.RemoteIpAddress.ToString();
+                logger.LogInformation("客户端ip:"+ clientIP);
+                if (clientIP != null && clientIP == "192.168.1.3")
+                    await next(context);
+                else
+                {
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync("不被允许访问的ip");
+                }
+
+            });
             //启动授权，调用位置需要在启动路由和路由验证方式之间。
             app.UseAuthorization();
-            //启用端点路由方式，得配合UseRouting
+            app.Use(next => async context =>
+            {
+                using (new MyStopwatch(logger, $"统计EndPoints中间件的处理耗时"))
+                {
+                    await next(context);
+                    logger.LogWarning("返回编码:" + context.Response.ContentType);
+                }
+            });
+
+            //启用端点路由方式，得配合UseRouting。如果在这一步中有对应的endpoint，则不会往后续的中间件上执行。否则后续的中间件会继续执行。
             app.UseEndpoints(endpoints =>
             {
+              
+
                 endpoints.MapRazorPages();
+                endpoints.MapGet("/MapGet", async context =>
+                {
+                    await context.Response.WriteAsync("Hello World!");
+                });
+                //endpoints.MapGet("/index", async context =>
+                //{
+                //    await context.Response.WriteAsync("Hello World!  instead of Index.cshtml, current index writeAsync will be send to client");
+                //});
+                endpoints.MapGet("/hello/{name:alpha}", async context =>
+                {
+                    var name = context.Request.RouteValues["name"];
+                    await context.Response.WriteAsync($"Hello {name}!");
+                });
+
+
             });
 
 

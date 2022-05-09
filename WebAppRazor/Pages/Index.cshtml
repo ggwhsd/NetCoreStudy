@@ -146,29 +146,65 @@
     </p>
 
     <p>
-        【主机】
-        注册一个服务，用于在主机启动和停止时做一些日志输出的操作。
-        LifetimeEventsHostedService.cs。
+        <h2>
+            【主机】</h2>
+            注册一个服务，用于在主机启动和停止时做一些日志输出的操作。
+            LifetimeEventsHostedService.cs。
 
-        在注册服务(依赖注入)时，有一个服务类型生命周期的概念，我个人理解为何时创建注入的对象，不表示何时销毁。临时的、Scope、单例三种。
-        临时:表示每次在需要依赖注入的时候，都是创建一个新的对象。
-        Scope：表示在一段范围内用创建一个，比如每一次request，从接收时都会创建一个，后续所有中间件都是用这一个。
-        单例：全局只有一个，只创建一次，这个最好立即。
-        虽然服务依赖注入时用的表明为临时的，但是如果某个单例类中保存了对于某个临时创建的依赖的引用，并且后续并不需要再次依赖，则该临时创建的对象将一直保留在系统中。
+            在注册服务(依赖注入)时，有一个服务类型生命周期的概念，我个人理解为何时创建注入的对象，不表示何时销毁。临时的、Scope、单例三种。
+            临时:表示每次在需要依赖注入的时候，都是创建一个新的对象。
+            Scope：表示在一段范围内用创建一个，比如每一次request，从接收时都会创建一个，后续所有中间件都是用这一个。
+            单例：全局只有一个，只创建一次，这个最好立即。
+            虽然服务依赖注入时用的表明为临时的，但是如果某个单例类中保存了对于某个临时创建的依赖的引用，并且后续并不需要再次依赖，则该临时创建的对象将一直保留在系统中。
     </p>
     <p>
         <pre>
-        【环境】通过IWebHostEnvironment env可以注入环境相关信息，示例在Start.Configuration中。
+        <h2>【环境】</h2>通过IWebHostEnvironment env可以注入环境相关信息，示例在Start.Configuration中。
         比如EnvironmentName。 框架默认环境一般分为三类:Development，Staging，Productiong。对应开发、用户验证测试、生产三个环境。
         当然，我们可以根据自己的环境来进行新增和删除。
         设置不同的环境是方便管理不同环境下的配置。
         环境信息默认从环境变量 DOTNET_ENVIRONMENT和ASPNETCORE_ENVIRONMENT（如果使用了web）中获取，且 ASPNETCORE_ENVIRONMENT会覆盖 DOTNET_ENVIRONMENT的信息。
+        <a href="About">About中有页面环境标签的使用</a>
+
 </pre>
 
     </p>
     <p>
-        【配置】<a href="./configShow">ConfigShow.cshtml</a>中示例。
-        后续内容都放到上面导航栏了，不然页面太多内容也没啥意思。知识得有组织的习得和实践。
+        <h2>
+            【配置】</h2><a href="./configShow">ConfigShow.cshtml</a>中示例。
+            后续内容都放到上面导航栏了，不然页面太多内容也没啥意思。知识得有组织的习得和实践。
+    </p>
+    <p>
+        <h2>【路由】</h2>
+        <pre>
+        有两个中间件组成，通过app.UseRouting()和app.UseEndpoints()成对注册使用。
+        路由涉及三个元素http method、:url、对应的处理方法。
+        
+        http method:
+        最简单的路由配置方法是:endpoints.MapGet。<a href="https://docs.microsoft.com/en-us/aspnet/core/fundamentals/routing?view=aspnetcore-5.0#routing-basics-1">官方小例子</a>
+        Post方法，对应endpoints.MapPost。Put方法，对应endpoints.MapPut。Delete方法，对应endpoints.MapDelete方法。
+
+        url:
+        "/hello"，是一个确定的路由
+        "/hello/{name:alpha}",是一个路由模板，/hello/Abcde也是符合这个模板的，并且Abcde会被复制到http请求的name参数中,这个参数会保存再HttpRequest.RouteValues中。
+        <img src="~/png/routeUrlPattern1Code.png" />
+        <img src="~/png/routeUrlPattern1.png" />
+几个url pattern模板，有助于快速了解。
+        <img src="~/png/routeUrlPatterns.png" />
+        可以通过context.GetEndpoint方式获取当前请求的路由结果。如下是通过不同位置添加显示GetEndpoint代码方式输出路由的Endpoint过程。
+        <img src="~/png/routeEndpointLocation.png" />
+url还可以设置约束，需要加上Route，比如 <code>[Route("users/{id:int:min(1)}")]</code>
+        再深入详细的还需要去看官方文档。
+
+</pre>
+    </p>
+    <p>
+        【错误页面】
+        Error.cshtml，默认就有一个，可以在这个页面中获取相关请求的错误信息。
+    </p>
+    <p>
+        【静态页面】
+        https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-5.0
     </p>
 </div>
 
