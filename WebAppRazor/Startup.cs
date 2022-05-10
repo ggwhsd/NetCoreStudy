@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppRazor.Middles;
@@ -49,6 +51,8 @@ namespace WebAppRazor
             services.AddTransient<IHostedService, LifetimeEventsHostedService>();
             //注入泛型
             services.AddTransient(typeof(TemplateServiceInterface<>), typeof(TemplateService<>));
+
+            services.AddDirectoryBrowser();
 
         }
 
@@ -129,6 +133,14 @@ namespace WebAppRazor
 
             //启动静态文件访问方式，打开之后才可以访问wwwroot路径下的静态资源。
             app.UseStaticFiles();
+
+            app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(env.WebRootPath, "png")),
+                // Path.Combine("D:/", "")),
+                RequestPath = "/MyDisk"
+            });
 
             //启动路由，在整个http request的pipeline中合适的位置加入了路由点，结合UseEndpoings具体路由方式，
             app.UseRouting();

@@ -202,9 +202,47 @@ url还可以设置约束，需要加上Route，比如 <code>[Route("users/{id:in
         【错误页面】
         Error.cshtml，默认就有一个，可以在这个页面中获取相关请求的错误信息。
     </p>
-    <p>
+    <pre>
         【静态页面】
-        https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-5.0
-    </p>
+        通过app.UseStaticFiles()方法启用该服务，默认web root是程序的{content root}/webroot文件夹。
+        在网页中使用 ~/ 表示webroot的路径。
+        如果我的静态页面分布在不同目录下，可以利用如下代码方法添加，其表示在页面请求的url中静态资源时， /NewStaticFileUrl 会被解析到实际物理目录MyNewStaticFiles下。
+        静态页面解析是在路由之前的，路由解析的基本非静态资源。
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(
+                Path.Combine(env.ContentRootPath, "MyNewStaticFiles")),
+            RequestPath = "/NewStaticFilesUrl"
+        });
+
+        可以对静态资源的http response进行header设置，比如如下代码
+        app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    // using Microsoft.AspNetCore.Http;
+                    ctx.Context.Response.Headers.Append(
+                         "Cache-Control", $"public, max-age=604800");
+                }
+            });
+
+        静态资源是可以添加授权访问的，如果需要对上述NewStaticFilesUrl添加授权访问而对wwwroot保持公开访问，则需要把添加NewStaticFilesUrl的代码移动到app.UseAuthorization();
+        然后注册授权服务，一般授权服务一旦添加则会对所有请求进行管理，除非在controller、action method等地方添加[AllowAnonymous]或者自定义授权策略[Authorize(PolicyName="MyPolicy")]。
+         
+        目录浏览功能默认是关闭的，因为打开之后就可以看到文件信息了，所以安全考虑默认不开该功能。开发环境可以打开。
+        AddDirectoryBrowser in Startup.ConfigureServices.
+
+         app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                Path.Combine(env.WebRootPath, "png")),
+                // Path.Combine("D:/", "")),
+                RequestPath = "/MyDisk"
+            });
+         如上功能，通过请求 http://127.0.0.1:9999/MyDisk 就可以看到当前wwwroot/png目录下的文件信息，但是无法下载，因为通过页面点击的文件链接并不是真正的静态资源url。
+         
+               
+https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-5.0
+    </pre>
 </div>
 
