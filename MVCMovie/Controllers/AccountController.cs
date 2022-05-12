@@ -10,6 +10,11 @@ namespace MVCMovie.Controllers
 {
     public class AccountController : Controller
     {
+        /// <summary>
+        /// 此处returnUrl是启用了授权验证之后，如果登陆时发现没有验证，会记录当前请求的页面作为returnUrl，等验证成功后，返回该页面。
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {

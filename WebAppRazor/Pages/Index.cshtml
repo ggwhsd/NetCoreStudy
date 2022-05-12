@@ -100,15 +100,16 @@
         <h2>【启动配置Startup】</h2>
         ：use Startup class by convention. 但是实际上改为其他名字也是可以的。如果不用Startup类，而是直接在创建主机时进行配置也是可以的。<br />
         第一种添加方式:通过扩展方式添加。<br />
-        自定义一个request pipeline middle: RequestSetOptionsMiddleware。<br/>
+        自定义一个request pipeline middle: RequestSetOptionsMiddleware。<br />
         自定义一个Configure: RequestSetOptionsStartupFilter，该StartupFilter用于扩展Startup中的Configure方法，在该类中通过builder.UseMiddleware<RequestSetOptionsMiddleware>
-    ()方式添加中间件。
-        <br />将RequestSetOptionsStartupFilter添加到服务中。在Startup的ConfigureServices中添加，从而程序启动的时候才会处理这个StartupFilter，从而进一步执行添加中间件的操作<br/>
-        services.AddTransient<IStartupFilter, RequestSetOptionsStartupFilter>();
-        <br/>
-        第二种添加方式，直接添加。具体参看中间件<br />
+            ()方式添加中间件。
+            <br />将RequestSetOptionsStartupFilter添加到服务中。在Startup的ConfigureServices中添加，从而程序启动的时候才会处理这个StartupFilter，从而进一步执行添加中间件的操作<br />
+            services.AddTransient<IStartupFilter, RequestSetOptionsStartupFilter>
+                ();
+                <br />
+                第二种添加方式，直接添加。具体参看中间件<br />
 
-</p>
+    </p>
 
     <p>
         <h2>【中间件】</h2>:
@@ -147,15 +148,16 @@
 
     <p>
         <h2>
-            【主机】</h2>
-            注册一个服务，用于在主机启动和停止时做一些日志输出的操作。
-            LifetimeEventsHostedService.cs。
+            【主机】
+        </h2>
+        注册一个服务，用于在主机启动和停止时做一些日志输出的操作。
+        LifetimeEventsHostedService.cs。
 
-            在注册服务(依赖注入)时，有一个服务类型生命周期的概念，我个人理解为何时创建注入的对象，不表示何时销毁。临时的、Scope、单例三种。
-            临时:表示每次在需要依赖注入的时候，都是创建一个新的对象。
-            Scope：表示在一段范围内用创建一个，比如每一次request，从接收时都会创建一个，后续所有中间件都是用这一个。
-            单例：全局只有一个，只创建一次，这个最好立即。
-            虽然服务依赖注入时用的表明为临时的，但是如果某个单例类中保存了对于某个临时创建的依赖的引用，并且后续并不需要再次依赖，则该临时创建的对象将一直保留在系统中。
+        在注册服务(依赖注入)时，有一个服务类型生命周期的概念，我个人理解为何时创建注入的对象，不表示何时销毁。临时的、Scope、单例三种。
+        临时:表示每次在需要依赖注入的时候，都是创建一个新的对象。
+        Scope：表示在一段范围内用创建一个，比如每一次request，从接收时都会创建一个，后续所有中间件都是用这一个。
+        单例：全局只有一个，只创建一次，这个最好立即。
+        虽然服务依赖注入时用的表明为临时的，但是如果某个单例类中保存了对于某个临时创建的依赖的引用，并且后续并不需要再次依赖，则该临时创建的对象将一直保留在系统中。
     </p>
     <p>
         <pre>
@@ -171,8 +173,9 @@
     </p>
     <p>
         <h2>
-            【配置】</h2><a href="./configShow">ConfigShow.cshtml</a>中示例。
-            后续内容都放到上面导航栏了，不然页面太多内容也没啥意思。知识得有组织的习得和实践。
+            【配置】
+        </h2><a href="./configShow">ConfigShow.cshtml</a>中示例。
+        后续内容都放到上面导航栏了，不然页面太多内容也没啥意思。知识得有组织的习得和实践。
     </p>
     <p>
         <h2>【路由】</h2>
@@ -198,12 +201,14 @@ url还可以设置约束，需要加上Route，比如 <code>[Route("users/{id:in
 
 </pre>
     </p>
+    <h2>  【错误页面】</h2>
     <p>
-        【错误页面】
+
         Error.cshtml，默认就有一个，可以在这个页面中获取相关请求的错误信息。
     </p>
+    <h2>  【静态页面】</h2>
     <pre>
-        【静态页面】
+        
         通过app.UseStaticFiles()方法启用该服务，默认web root是程序的{content root}/webroot文件夹。
         在网页中使用 ~/ 表示webroot的路径。
         如果我的静态页面分布在不同目录下，可以利用如下代码方法添加，其表示在页面请求的url中静态资源时， /NewStaticFileUrl 会被解析到实际物理目录MyNewStaticFiles下。
@@ -239,10 +244,66 @@ url还可以设置约束，需要加上Route，比如 <code>[Route("users/{id:in
                 // Path.Combine("D:/", "")),
                 RequestPath = "/MyDisk"
             });
-         如上功能，通过请求 http://127.0.0.1:9999/MyDisk 就可以看到当前wwwroot/png目录下的文件信息，但是无法下载，因为通过页面点击的文件链接并不是真正的静态资源url。
-         
+         如上功能，通过请求 http://127.0.0.1:9999/MyDisk 就可以看到当前wwwroot/png目录下的文件信息，但是无法下载.
+        因为通过页面点击的文件链接并不是真正的静态资源url。想要下载，可以通过如下配置静态资源文件的映射，从而使得Directory中的路径和staticFile的url一样。
+          app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.WebRootPath, "png")),
+                RequestPath = "/MyDisk"
+            });
                
 https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-5.0
     </pre>
+
+    <h2>  【认证和授权】</h2>
+    <p>
+        <ol>
+            <li>Authentication 认证，is the process of determining a user's identity.</li>
+            <li>Authorization 授权, is the process of determining whether a user has access a resource.</li>
+        </ol>
+        <pre>
+    认证，需要添加services.AddAuthentication用于注册认证服务，注册服务时需要提供哪种认证机制。认证机制大致有：Cookie、JWT Bearer、OAuth2.0、OIDC。
+    其中Cookie和JWT Bearer是不需要第三方认证的，而OAuth2.0和OIDC都属于第三方认证。
+</pre>
+        <b>Challenge和Forbid。</b><br />
+        Challenge，在Cookie机制下，例如对于没有认证的用户请求需要重定向到登录页面。<br />
+        Forbid，在Cookie机制下，用户认证通过，但是对于请求资源没有权限，需要返回页面告诉用户。
+        <br />
+        <b>
+            cookie认证示例<br />
+        </b>
+        在startup.cs的ConfigureServices方法中添加服务:<br />
+        <pre>
+            //添加cookie认证服务
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+        </pre>
+        AddAuthentication表示添加认证服务，后面配合AddCookie说明添加的服务时Cookie认证。因为支持多个Cookie认证，所以在AddAuthentication的参数中可以传入名字表示来区分后面认认证的实例。
+        AddCookie()可以添加配置cookie认证方面的参数(并非客户端cookie参数)，如下：<br />
+        <pre>
+        AddCookie(options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+            options.SlidingExpiration = true;
+            options.AccessDeniedPath = "/Forbidden/";
+        }
+        </pre>
+        在startup.cs的Configure方法中添加认证中间件,此方法必须位于<code>app.UseRoute</code>和<code>app.UseEndpoints</code>之间，<em>app.UseAuthorization()</em> 之前:<br />
+        <pre>
+         //添加认证，配合添加cookie认证服务
+            app.UseAuthentication();
+        
+            <p>
+                对于RazorPage，只能在Page上增加[Authorize]，例如对AboutPage启用认证，如下
+            <pre>
+            [Authorize]
+            public class AboutModel : PageModel
+            {}
+            </pre>
+                此时访问About页面,会转发 http://192.168.1.3:9999/Account/Login?ReturnUrl=%2FAbout 但是该页面目前不存在，所以提示404错误。
+                <br/>
+         添加Login页面
+
+        <br />
 </div>
 

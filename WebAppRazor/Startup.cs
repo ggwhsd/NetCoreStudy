@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -53,6 +54,13 @@ namespace WebAppRazor
             services.AddTransient(typeof(TemplateServiceInterface<>), typeof(TemplateService<>));
 
             services.AddDirectoryBrowser();
+            //添加cookie认证服务
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.SlidingExpiration = true;  //滑动窗口方式，如果一个request时发现超过了设定的过时时间一半了，则重新分配一个cookie并且重新记时间。
+              //  options.AccessDeniedPath = "/Forbidden/";
+            });
 
         }
 
@@ -157,8 +165,11 @@ namespace WebAppRazor
                 }
 
             });
-            //启动授权，调用位置需要在启动路由和路由验证方式之间。
+            //启用认证，配合添加cookie认证服务
+            app.UseAuthentication();
+            //启动授权中间件，调用位置需要在启动路由和路由验证方式之间。启用之后会去找授权服务。
             app.UseAuthorization();
+
             app.Use(next => async context =>
             {
                 using (new MyStopwatch(logger, $"统计EndPoints中间件的处理耗时"))
