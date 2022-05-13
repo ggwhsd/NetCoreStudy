@@ -253,11 +253,11 @@ url还可以设置约束，需要加上Route，比如 <code>[Route("users/{id:in
                 RequestPath = "/MyDisk"
             });
                
-https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-5.0
+
     </pre>
 
-    <h2>  【认证和授权】</h2>
-    <p>
+    <h2>  【认证】</h2>
+
         <ol>
             <li>Authentication 认证，is the process of determining a user's identity.</li>
             <li>Authorization 授权, is the process of determining whether a user has access a resource.</li>
@@ -285,25 +285,66 @@ https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspn
         {
             options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
             options.SlidingExpiration = true;
-            options.AccessDeniedPath = "/Forbidden/";
+            //options.AccessDeniedPath = "/Forbidden/";
         }
         </pre>
         在startup.cs的Configure方法中添加认证中间件,此方法必须位于<code>app.UseRoute</code>和<code>app.UseEndpoints</code>之间，<em>app.UseAuthorization()</em> 之前:<br />
-        <pre>
+                                                                                                                                            <pre>
          //添加认证，配合添加cookie认证服务
             app.UseAuthentication();
         
-            <p>
+                                                                                                                                            <p>
                 对于RazorPage，只能在Page上增加[Authorize]，例如对AboutPage启用认证，如下
-            <pre>
+                                                                                                                                            <pre>
             [Authorize]
             public class AboutModel : PageModel
             {}
             </pre>
                 此时访问About页面,会转发 http://192.168.1.3:9999/Account/Login?ReturnUrl=%2FAbout 但是该页面目前不存在，所以提示404错误。
-                <br/>
-         添加Login页面
+                                                                                                                                            <br />
+                默认Cookie的授权页面时Account/Login。添加Login的Razor页面，该页面包含cshtml和cshtml.cs。cshtml.cs，首先针对Get方法，代码如下，其实就是返回表单
+                                                                                                                                            <img src="~/png/loginGet.png">
+                                                                                                                                            <img src="~/png/loginInput.png">
+                                                                                                                                            <br />
+                返回一个表单，然后填入信息，post方法提交，post方法代码如下
+                                                                                                                                            <img src="~/png/loginPost.png">
+                以上完成了认证的上半部分，下半部分就是将认证信息保存到aspnetcore中，这样针对其他有[Authorize]的页面则不再继续登录输入验证，而是试用之前的认证身份了。<br />
+                加上如下代码就可以完成剩余部分验证功能。<br />
+                
+                                                                                                                                            <img src="~/png/loginSignInClaimsPrincipal.png">
+                                                                                                                                            <br />
+                登录也要有登出，添加Logout的Razor页面，代码如下：
+                [Authorize]
+                public class LogoutModel : PageModel
+                {
+                public async void OnGet()
+                {
+                await HttpContext.SignOutAsync();
 
-        <br />
+                }
+                }
+                                                                                                                                            <pre>
+至此最基本的认证授权完成。在当前例子下，[Authorize]表示授权认证用户，就是登录认证成功的用户就可以访问任何资源。
+https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-5.0
+</pre>
+                </p>
+
+                                                                                                                                            <h2>  【授权】</h2>
+                                                                                                                                            <pre>
+     Authorization refers to the process that determines what a user is able to do.
+    *授权以需求方式表示，授权处理程序根据需求来评估用户情况。以[Authorize]加参数的方式来表示需求，可以修饰controller、razorpage、action。
+    *提供了基于角色和基于策略的授权模型。
+    *Razorpage还可以通过如下方式 添加哪些文件和目录需要授权验证，哪些可以匿名。
+services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizePage("/Contact");
+    options.Conventions.AuthorizeFolder("/Private");
+    options.Conventions.AllowAnonymousToPage("/Private/PublicPage");
+    options.Conventions.AllowAnonymousToFolder("/Private/PublicPages");
+});
+另外，对于一个文件夹定义了授权，对其子page可以定义匿名，但是反过来，对文件夹匿名访问权限就不能对子进行权限设置。
+.AuthorizeFolder("/Private").AllowAnonymousToPage("/Private/Public")
+    </pre>
+    https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-5.0
 </div>
 

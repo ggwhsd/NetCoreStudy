@@ -46,8 +46,12 @@ namespace WebAppRazor
             services.AddMyConfig(Configuration);
             // 在执行这行代码前，已经有两百多个服务加入进去了。
             services.AddRazorPages();
-            //相当于又添加了一个Startup.configure
-            services.AddTransient<IStartupFilter,
+            //services.AddRazorPages(options =>
+            //{
+            //    options.Conventions.AuthorizePage("/Index");
+            //});
+                //相当于又添加了一个Startup.configure
+                services.AddTransient<IStartupFilter,
                       RequestSetOptionsStartupFilter>();
             services.AddTransient<IHostedService, LifetimeEventsHostedService>();
             //注入泛型
@@ -61,6 +65,8 @@ namespace WebAppRazor
                 options.SlidingExpiration = true;  //滑动窗口方式，如果一个request时发现超过了设定的过时时间一半了，则重新分配一个cookie并且重新记时间。
               //  options.AccessDeniedPath = "/Forbidden/";
             });
+
+
 
         }
 

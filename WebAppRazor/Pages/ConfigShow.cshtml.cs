@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using WebAppRazor.Configuration;
 
 namespace WebAppRazor.Pages
 {
+    [Authorize]
     public class ConfigShowModel : PageModel
     {
         private IConfigurationRoot ConfigRoot;
