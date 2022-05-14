@@ -49,20 +49,58 @@ namespace WebAppRazor.Pages.Account
                 logger.LogInformation($"{userInfo.UserName} {userInfo.Password}");
                 if (ValidUserPassword(userInfo))  //密码验证，验证通过后，为了后续不再验证，所以需要调用xxx方法，进行身份的cookie记录
                 {
+                    string role = "MyUser1Role";
+                    if (userInfo.UserName == "111")
+                        role = "MyUser1Role";
+                    else if (userInfo.UserName == "222")
+                        role = "MyUser2Role";
+                    else if (userInfo.UserName == "000")
+                        role = "Administrator";
+                    else
+                    {}
+
                     //创建证件基本信息
                     var claims = new List<Claim>
-                {
-                    new Claim("username", userInfo.UserName),
-                    new Claim("other", "xxx")
-                };
+                    {
+                        new Claim("username", userInfo.UserName),   //ClaimType= username 
+                        new Claim("role", role)                     //ClaimType= role 
+                    };
                     //认证属性，设定超时为1分钟
                     var authProperties = new AuthenticationProperties();
                     authProperties.ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(1);
 
-                    //ClaimsPrincipal:相当于证件完整信息，其中包含了基本信息-证件用途类型-证件人信息-证件人角色
-                    //调用框架的登录功能，登记证件，对于框架的授权认证而言，只针对ClaimsPrincipal，从而做到与具体认证授权方法相互透明。
-                    await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "role")), authProperties);
-
+                    ///ClaimsPrincipal:相当于证件完整信息，其中包含了基本信息-证件用途类型-证件人信息-证件人角色
+                    ///调用框架的登录功能，登记证件，对于框架的授权认证而言，只针对ClaimsPrincipal，从而做到与具体认证授权方法相互透明。
+                    if (userInfo.UserName != "111")
+                     { 
+                    //添加单个证件持有人
+                    await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "cookies",
+                        "username",    //用claims中的哪个claimtype来表示用户名。
+                        "role"   //意思就是说 用claims中的哪个claimtype来表示角色名。
+                        )), authProperties);
+                    }
+                    //111是超级用户
+                    # region 添加多个证件持有人
+                    else if (userInfo.UserName == "111")
+                    {
+                            List<ClaimsIdentity> cis = new List<ClaimsIdentity>();
+                            cis.Add(new ClaimsIdentity(claims, "Cookies",
+                                "username",    //用claims中的哪个claimtype来表示用户名。
+                                "role"   //意思就是说 用claims中的哪个claimtype来表示角色名。
+                                ));
+                            //创建证件基本信息
+                        var claims2 = new List<Claim>
+                        {
+                            new Claim("username", userInfo.UserName),   //ClaimType= username 
+                            new Claim("role", "Administrator")                     //ClaimType= role 
+                        };
+                        cis.Add(new ClaimsIdentity(claims2, "Cookies",
+                          "username",    //用claims中的哪个claimtype来表示用户名。
+                          "role"   //意思就是说 用claims中的哪个claimtype来表示角色名。
+                          ));
+                        await HttpContext.SignInAsync(new ClaimsPrincipal(cis), authProperties);
+                        #endregion
+                    }
                     return RedirectToPage(ReturnUrl);
                 }
                 else
@@ -81,7 +119,8 @@ namespace WebAppRazor.Pages.Account
         /// <returns></returns>
         private bool ValidUserPassword(LoginInput userInput)
         {
-            if (userInput.UserName == "111" && userInput.Password == "password")
+            string[] users = {"111","222","000" };
+            if (users.Contains(userInput.UserName) && userInput.Password == "password")
             {
                 return true;
             }

@@ -9,14 +9,15 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace WebAppRazor.Pages
 {
 
-    [Authorize]
+    [Authorize(Roles = "MyUser1Role")]
+    [Authorize(Roles = "Administrator")]
     public class AboutModel : PageModel
     {
         //每个请求scope范围内都会创建一个新的AboutModel模型，
         public String Message = DateTime.Now.ToLongTimeString();
 
 
-       
+      
         public void OnGet()
         {
             

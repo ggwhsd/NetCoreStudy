@@ -258,29 +258,29 @@ url还可以设置约束，需要加上Route，比如 <code>[Route("users/{id:in
 
     <h2>  【认证】</h2>
 
-        <ol>
-            <li>Authentication 认证，is the process of determining a user's identity.</li>
-            <li>Authorization 授权, is the process of determining whether a user has access a resource.</li>
-        </ol>
-        <pre>
+    <ol>
+        <li>Authentication 认证，is the process of determining a user's identity.</li>
+        <li>Authorization 授权, is the process of determining whether a user has access a resource.</li>
+    </ol>
+    <pre>
     认证，需要添加services.AddAuthentication用于注册认证服务，注册服务时需要提供哪种认证机制。认证机制大致有：Cookie、JWT Bearer、OAuth2.0、OIDC。
     其中Cookie和JWT Bearer是不需要第三方认证的，而OAuth2.0和OIDC都属于第三方认证。
 </pre>
-        <b>Challenge和Forbid。</b><br />
-        Challenge，在Cookie机制下，例如对于没有认证的用户请求需要重定向到登录页面。<br />
-        Forbid，在Cookie机制下，用户认证通过，但是对于请求资源没有权限，需要返回页面告诉用户。
-        <br />
-        <b>
-            cookie认证示例<br />
-        </b>
-        在startup.cs的ConfigureServices方法中添加服务:<br />
-        <pre>
+    <b>Challenge和Forbid。</b><br />
+    Challenge，在Cookie机制下，例如对于没有认证的用户请求需要重定向到登录页面。<br />
+    Forbid，在Cookie机制下，用户认证通过，但是对于请求资源没有权限，需要返回页面告诉用户。
+    <br />
+    <b>
+        cookie认证示例<br />
+    </b>
+    在startup.cs的ConfigureServices方法中添加服务:<br />
+    <pre>
             //添加cookie认证服务
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
         </pre>
-        AddAuthentication表示添加认证服务，后面配合AddCookie说明添加的服务时Cookie认证。因为支持多个Cookie认证，所以在AddAuthentication的参数中可以传入名字表示来区分后面认认证的实例。
-        AddCookie()可以添加配置cookie认证方面的参数(并非客户端cookie参数)，如下：<br />
-        <pre>
+    AddAuthentication表示添加认证服务，后面配合AddCookie说明添加的服务时Cookie认证。因为支持多个Cookie认证，所以在AddAuthentication的参数中可以传入名字表示来区分后面认认证的实例。
+    AddCookie()可以添加配置cookie认证方面的参数(并非客户端cookie参数)，如下：<br />
+    <pre>
         AddCookie(options =>
         {
             options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
@@ -288,49 +288,48 @@ url还可以设置约束，需要加上Route，比如 <code>[Route("users/{id:in
             //options.AccessDeniedPath = "/Forbidden/";
         }
         </pre>
-        在startup.cs的Configure方法中添加认证中间件,此方法必须位于<code>app.UseRoute</code>和<code>app.UseEndpoints</code>之间，<em>app.UseAuthorization()</em> 之前:<br />
-                                                                                                                                            <pre>
+    在startup.cs的Configure方法中添加认证中间件,此方法必须位于<code>app.UseRoute</code>和<code>app.UseEndpoints</code>之间，<em>app.UseAuthorization()</em> 之前:<br />
+    <pre>
          //添加认证，配合添加cookie认证服务
             app.UseAuthentication();
-        
-                                                                                                                                            <p>
-                对于RazorPage，只能在Page上增加[Authorize]，例如对AboutPage启用认证，如下
-                                                                                                                                            <pre>
+        </pre>
+    <p>
+        对于RazorPage，只能在Page上增加[Authorize]，例如对AboutPage启用认证，如下
+        <pre>
             [Authorize]
             public class AboutModel : PageModel
             {}
             </pre>
-                此时访问About页面,会转发 http://192.168.1.3:9999/Account/Login?ReturnUrl=%2FAbout 但是该页面目前不存在，所以提示404错误。
-                                                                                                                                            <br />
-                默认Cookie的授权页面时Account/Login。添加Login的Razor页面，该页面包含cshtml和cshtml.cs。cshtml.cs，首先针对Get方法，代码如下，其实就是返回表单
-                                                                                                                                            <img src="~/png/loginGet.png">
-                                                                                                                                            <img src="~/png/loginInput.png">
-                                                                                                                                            <br />
-                返回一个表单，然后填入信息，post方法提交，post方法代码如下
-                                                                                                                                            <img src="~/png/loginPost.png">
-                以上完成了认证的上半部分，下半部分就是将认证信息保存到aspnetcore中，这样针对其他有[Authorize]的页面则不再继续登录输入验证，而是试用之前的认证身份了。<br />
-                加上如下代码就可以完成剩余部分验证功能。<br />
-                
-                                                                                                                                            <img src="~/png/loginSignInClaimsPrincipal.png">
-                                                                                                                                            <br />
-                登录也要有登出，添加Logout的Razor页面，代码如下：
-                [Authorize]
-                public class LogoutModel : PageModel
-                {
-                public async void OnGet()
-                {
-                await HttpContext.SignOutAsync();
+        此时访问About页面,会转发 http://192.168.1.3:9999/Account/Login?ReturnUrl=%2FAbout 但是该页面目前不存在，所以提示404错误。
+        <br />
+        默认Cookie的授权页面时Account/Login。添加Login的Razor页面，该页面包含cshtml和cshtml.cs。cshtml.cs，首先针对Get方法，代码如下，其实就是返回表单
+        <img src="~/png/loginGet.png">
+        <img src="~/png/loginInput.png">
+        <br />
+        返回一个表单，然后填入信息，post方法提交，post方法代码如下
+        <img src="~/png/loginPost.png">
+        以上完成了认证的上半部分，下半部分就是将认证信息保存到aspnetcore中，这样针对其他有[Authorize]的页面则不再继续登录输入验证，而是试用之前的认证身份了。<br />
+        加上如下代码就可以完成剩余部分验证功能。<br />
 
-                }
-                }
-                                                                                                                                            <pre>
+        <img src="~/png/loginSignInClaimsPrincipal.png">
+        <br />
+        登录也要有登出，添加Logout的Razor页面，代码如下：
+        [Authorize]
+        public class LogoutModel : PageModel
+        {
+        public async void OnGet()
+        {
+        await HttpContext.SignOutAsync();
+
+        }
+        }
+        <pre>
 至此最基本的认证授权完成。在当前例子下，[Authorize]表示授权认证用户，就是登录认证成功的用户就可以访问任何资源。
 https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-5.0
 </pre>
-                </p>
-
-                                                                                                                                            <h2>  【授权】</h2>
-                                                                                                                                            <pre>
+    </p>
+    <h2>  【授权】</h2>
+    <pre>
      Authorization refers to the process that determines what a user is able to do.
     *授权以需求方式表示，授权处理程序根据需求来评估用户情况。以[Authorize]加参数的方式来表示需求，可以修饰controller、razorpage、action。
     *提供了基于角色和基于策略的授权模型。
@@ -345,6 +344,30 @@ services.AddRazorPages(options =>
 另外，对于一个文件夹定义了授权，对其子page可以定义匿名，但是反过来，对文件夹匿名访问权限就不能对子进行权限设置。
 .AuthorizeFolder("/Private").AllowAnonymousToPage("/Private/Public")
     </pre>
+
+    <h2>【基于角色授权】</h2>
+    [Authorize(Roles = "MyUser1Role,MyUsers")] 表示角色属于其中任一一个，不表示同时属于两个角色。<br />
+    <pre>
+    [Authorize(Roles = "MyUser1Role")]
+    [Authorize(Roles = "MyUsers")]
+    以上两个同时写，表示需要同时属于两个角色。
+</pre>
+    同时修改登录代码，需要加上根据不同用户将其赋予不同角色，主要修改如下两处，一是在claim中增加代表角色的类型（claim type），而是创建的ClaimsIdentity中指明试用claims中的哪个字段为角色类型。
+    <img src="~/png/loginRoles.png" alt="代码看不见了" />
+    <a href="https://www.cnblogs.com/dudu/p/6367303.html">关于Claim, ClaimsIdentity, ClaimsPrincipal的说明</a>
+    如果多个角色，则创建多个ClaimsIdentity，将其通过List方式赋值到ClaimsPrincipal中即可。
+    基于角色的授权，也可以试用Policy语法来使用相同的目的，即把多个角色看作一个Policy，比如如下,先添加策略以及策略配置
+    <pre>
+        services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdministratorRole",
+                     policy => policy.RequireRole("Administrator"));
+            });
+</pre>
+    然后在需要授权验证的地方，使用
+    <code>[Authorize(Policy = "RequireAdministratorRole")]</code>即可等价于[Authorize(Roles = "Administrator")]
+    <h2>【基于策略授权】</h2>
+
     https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-5.0
 </div>
 
