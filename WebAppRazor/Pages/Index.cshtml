@@ -331,7 +331,7 @@ https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspn
     <h2>  【授权】</h2>
     <pre>
      Authorization refers to the process that determines what a user is able to do.
-    *授权以需求方式表示，授权处理程序根据需求来评估用户情况。以[Authorize]加参数的方式来表示需求，可以修饰controller、razorpage、action。
+    *授权以需求方式表示，授权处理程序根据需求来评估用户情况。以[Authorize]加参数的方式来表示需求，可以修饰controller、razorpage、action这三类资源。
     *提供了基于角色和基于策略的授权模型。
     *Razorpage还可以通过如下方式 添加哪些文件和目录需要授权验证，哪些可以匿名。
 services.AddRazorPages(options =>
@@ -356,7 +356,8 @@ services.AddRazorPages(options =>
     <img src="~/png/loginRoles.png" alt="代码看不见了" />
     <a href="https://www.cnblogs.com/dudu/p/6367303.html">关于Claim, ClaimsIdentity, ClaimsPrincipal的说明</a>
     如果多个角色，则创建多个ClaimsIdentity，将其通过List方式赋值到ClaimsPrincipal中即可。
-    基于角色的授权，也可以试用Policy语法来使用相同的目的，即把多个角色看作一个Policy，比如如下,先添加策略以及策略配置
+    <b>到目前为止，并没有在服务中添加授权服务</b>
+    基于角色的授权，也可以试用<b>Policy语法</b>来使用相同的目的，即把多个角色看作一个Policy，比如如下,先添加授权服务，策略以及策略配置
     <pre>
         services.AddAuthorization(options =>
             {
@@ -366,8 +367,59 @@ services.AddRazorPages(options =>
 </pre>
     然后在需要授权验证的地方，使用
     <code>[Authorize(Policy = "RequireAdministratorRole")]</code>即可等价于[Authorize(Roles = "Administrator")]
+    <h2>【基于Claims收取按】</h2>
+    是一种基于策略授权基础之上的应用，对于使用了授权策略<code>EmployeeOnly</code>的资源，如下表示Claim如果包含了<code>EmployeeNumber</code>，则算授权通过。
+    options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
     <h2>【基于策略授权】</h2>
+    基于策略授权深入，此处不光是在策略中使用角色了，策略还有很多高高级的使用方法，
+    <ol>
+        <li>
+            添加授权服务，添加一个策略并定义策略的需求（相当于handler需要使用的条件数据)
+        </li>
+        <li>
+            创建自定义的策略处理handler，并将其注入到服务中。
+        </li>
+        <li>
+            通过[Authorize(Policy = "YourPolicy")]来使用到对应资源上，资源包括 RazorPage、Controller、Action of a Controller
+        </li>
+    </ol>
+    <h3>添加授权服务及策略</h3>
+    <pre>
+   
+        services.AddAuthorization(options =>
+                    {
+                        options.AddPolicy("AtLeast21", policy =>
+                            policy.Requirements.Add(new MinimumAgeRequirement(21)));
+                    });
+    </pre>
+    如上代码表示添加了授权服务，并且定义了策略AtLeast21，该策略需求为MinimumAgeRequirement。如果一个策略添加多个Requirement，则这些Requirements之间是<b>and的关系</b>。
+    <br />
+    IAuthorizationService服务默认实现如下：
+    <img src="~/png/authorizonPolicy1.png" />
+    可以看到代码中，需要满足所有handler条件，才可以。
+    MinimumAgeRequirement代码如下：
+    <pre>
+        public class MinimumAgeRequirement : IAuthorizationRequirement
+        {
+            public int MinimumAge { get; }
 
+            public MinimumAgeRequirement(int minimumAge)
+            {
+                MinimumAge = minimumAge;
+            }
+        }
+    </pre>
+    <h3>创建自定义的策略处理handler</h3>
+    此处MinimumAgeHandler只能处理一个requirement，
+    <img src="/png/authorizonPolicyHandler.png" />
+    <br />
+    如果需要处理多个，则需要实现接口的HandleAsync方法，通过context.PendingRequirements获取所有requirement，然后循环进行处理，通过对每一个requirement进行context.Succeed(requirement);进行处理通过的反馈，如果该需求没有通过授权则不需要调用。
+    <h4>注册授权handler</h4>
+    可以添加多个IAuthorizationHandler服务，也可以对同一个requirement制作多个handler，此时，同一个requirement的多个handler的默认关系是<b>or的关系</b>。
+    <pre>
+        services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
+    </pre>
+    <a href="/Age22">测试必须年龄大于22岁</a>
     https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-5.0
 </div>
 

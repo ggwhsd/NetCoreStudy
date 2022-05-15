@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebAppRazor.Middles;
 using WebAppRazor.Services;
+using WebAppRazor.Services.AuthorizonHandler;
 using WebAppRazor.Utils;
 
 namespace WebAppRazor
@@ -40,7 +42,7 @@ namespace WebAppRazor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<MyLog4NetService>();
-            //在服务中注册配置,如果有很多配置需要读入，则可以通过扩展方法的方式将这些配置到集中到一个类文件中
+            //在服务中注册配置,如果有很多配置需要读入，则可以通过扩展方法的方式将这些配置到集中到一个类文件中，参考MyConfigServiceCollectionExtensions
             services.Configure<Configuration.PositionOptions>(Configuration.GetSection(WebAppRazor.Configuration.PositionOptions.Position));
             //自定义的扩展方法
             services.AddMyConfig(Configuration);
@@ -65,8 +67,24 @@ namespace WebAppRazor
                 options.SlidingExpiration = true;  //滑动窗口方式，如果一个request时发现超过了设定的过时时间一半了，则重新分配一个cookie并且重新记时间。
               //  options.AccessDeniedPath = "/Forbidden/";
             });
+            //添加授权策略，如果是基于角色的，可以不用如下添加授权策略服务,如下代码等价于应用角色，从这里可以看出，把角色看作策略的子集比较合适。
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("RequireAdministratorRole",
+            //         policy => policy.RequireRole("Administrator"));
+            //});
 
-
+            #region 基于策略授权 
+            //添加授权策略，基于策略，策略方式的授权可以扩展，此处扩展了一个IAuthorizationRequirement需求，该接口是空的，用于标记作用。
+            //会被IAuthorizationService服务使用。默认IAuthorizationService的实现
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AtLeast21", policy =>
+                    policy.Requirements.Add(new MinimumAgeRequirement(21)));
+            });
+            //注册自定义Requirement的IAuthorizationHandler
+            services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
+            #endregion
 
         }
 
@@ -162,7 +180,7 @@ namespace WebAppRazor
             {
                 string clientIP = context.Connection.RemoteIpAddress.ToString();
                 logger.LogInformation("客户端ip:"+ clientIP);
-                if (clientIP != null && clientIP == "192.168.1.3")
+                if (clientIP != null && clientIP == "127.0.0.1")
                     await next(context);
                 else
                 {

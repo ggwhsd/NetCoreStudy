@@ -63,6 +63,7 @@ namespace WebAppRazor.Pages.Account
                     var claims = new List<Claim>
                     {
                         new Claim("username", userInfo.UserName),   //ClaimType= username 
+                        new Claim(ClaimTypes.DateOfBirth, DateTime.Now.AddYears(-30).ToString(), null , "http://contoso.com"),
                         new Claim("role", role)                     //ClaimType= role 
                     };
                     //认证属性，设定超时为1分钟
