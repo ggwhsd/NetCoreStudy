@@ -67,12 +67,22 @@ namespace WebAppRazor
                 options.SlidingExpiration = true;  //滑动窗口方式，如果一个request时发现超过了设定的过时时间一半了，则重新分配一个cookie并且重新记时间。
               //  options.AccessDeniedPath = "/Forbidden/";
             });
+            #region 基于角色
             //添加授权策略，如果是基于角色的，可以不用如下添加授权策略服务,如下代码等价于应用角色，从这里可以看出，把角色看作策略的子集比较合适。
             //services.AddAuthorization(options =>
             //{
             //    options.AddPolicy("RequireAdministratorRole",
             //         policy => policy.RequireRole("Administrator"));
             //});
+            #endregion
+
+            #region 基于Claim
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("UserXXX", policy =>
+            //        policy.RequireClaim("username","111","222"));
+            //});
+            #endregion
 
             #region 基于策略授权 
             //添加授权策略，基于策略，策略方式的授权可以扩展，此处扩展了一个IAuthorizationRequirement需求，该接口是空的，用于标记作用。

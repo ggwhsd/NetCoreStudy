@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "授权验证的示例网站";
+    ViewData["Title"] = "aspnetcore的基础知识简单学习";
 }
 
 <div class="text-center">
@@ -370,6 +370,8 @@ services.AddRazorPages(options =>
     <h2>【基于Claims收取按】</h2>
     是一种基于策略授权基础之上的应用，对于使用了授权策略<code>EmployeeOnly</code>的资源，如下表示Claim如果包含了<code>EmployeeNumber</code>，则算授权通过。
     options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
+    如果期望是某个字段满足某个值，可以使用如下
+    options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber","No.0001","No.0002"));
     <h2>【基于策略授权】</h2>
     基于策略授权深入，此处不光是在策略中使用角色了，策略还有很多高高级的使用方法，
     <ol>
@@ -421,5 +423,9 @@ services.AddRazorPages(options =>
     </pre>
     <a href="/Age22">测试必须年龄大于22岁</a>
     https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-5.0
+    <h1>安全的其他内容</h1>
+    安全内容很多，比如限制某些ip可以访问，我在示例代码中用了一种方法，官网也给出了其他<a href="https://docs.microsoft.com/en-us/aspnet/core/security/ip-safelist?view=aspnetcore-5.0">写法</a><br/>
+
+
 </div>
 

@@ -1,0 +1,43 @@
+﻿@page
+@model WebAppRazor.Pages.Index2Model
+@{
+}
+
+
+
+<h1>aspnetcore中缓存使用的学习</h1>
+<div>
+    <h2>缓存</h2>
+    <pre>
+    Caching works <b>best</b> with data that changes <b>infrequently</b> and is <b>expensive</b> to generate .
+
+    单机内存缓存(in-memory cache)和分布式缓存(distributed cache).
+    对于多台应用服务器时，需要考虑是否要session sticky，对于需要session sticky的应用，需要相同的会话转发到同一台服务器上处理。
+    对于分布式缓存，需要考虑缓存一致性。
+
+
+    </pre>
+    使用缓存有如下3点guidelines：
+    <ol>
+        <li>
+            不要使用外部输入的数据作为Cache的Key，以免出现意外不可控的情况。
+
+        </li>
+        <li>
+            使用过期时间来限制缓存的增长。缓存目前来说还是稀缺资源。
+
+        </li>
+        <li>
+            使用SetSize等限制缓存上限。
+        </li>
+    </ol>
+
+
+    <h3>单机内存缓存(in-memory cache)</h3>
+
+
+    <ol>
+        <li><a href="/CacheExample/CacheTryGetValueSet">Cache TryGetValueSet</a></li>
+    </ol>
+    https://docs.microsoft.com/en-us/aspnet/core/performance/caching/memory?view=aspnetcore-5.0#use-setsize-size-and-sizelimit-to-limit-cache-size
+</div>
