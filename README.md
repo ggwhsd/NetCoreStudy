@@ -641,6 +641,10 @@ if (ValidateLogin(userName, password))
 
 ** MLPredictiveMaintenanceML.ConsoleApp 直接引用 MLPredictiveMaintenanceML.Model的一个测试程序，
 
+** bicycle_rental 该项目没有使用界面引导生成，而是通过代码步骤生成训练模型，基于历史的自行车出租数量，预测未来的出租数量。
+
+** bicycle_
+
 https://docs.microsoft.com/zh-cn/dotnet/machine-learning/how-to-choose-an-ml-net-algorithm
 
 
