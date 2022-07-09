@@ -425,7 +425,22 @@ services.AddRazorPages(options =>
     https://docs.microsoft.com/en-us/aspnet/core/security/authorization/roles?view=aspnetcore-5.0
     <h1>安全的其他内容</h1>
     安全内容很多，比如限制某些ip可以访问，我在示例代码中用了一种方法，官网也给出了其他<a href="https://docs.microsoft.com/en-us/aspnet/core/security/ip-safelist?view=aspnetcore-5.0">写法</a><br/>
+    <p>
+        <h2>缓存</h2>
+        缓存在 <a href="Index2">Index2.chtml</a>中有介绍。
+       
+    </p>
 
+    <p>
+        <h2>后台服务，随程序启动的功能，比如定时停止web</h2>
+        可以通过继承IHostSerivce接口，实现，在程序启动和正常关闭进程时触发。在配置文件中添加 “"AutoCloseTime": "17:55:00",”<br />
+        参考自定义的WebAppRazor.ServicesBack.AutoTimerCloseWeb.cs类。<br />
+        在startup.ConfigureServices中添加该服务：services.AddHostedService<AutoTimerCloseWeb>();<br />
+
+            另外，通过依赖注入获取web应用程序的实例 IHost web，从而可以启动web。
+
+
+    </p>
 
 </div>
 

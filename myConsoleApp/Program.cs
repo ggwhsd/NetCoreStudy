@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using WinFormsApp1;
 
 namespace myConsoleApp
 {
@@ -43,15 +44,35 @@ namespace myConsoleApp
             TaskWait.TestTaskAny();
             TaskWait.TestTaskCancel();*/
 
-            DataModelStudy dataModel = new DataModelStudy();
+            // DataModelStudy dataModel = new DataModelStudy();
             /*dataModel.createRecord();
             dataModel.equalRecords();
             dataModel.withRecord();
             dataModel.anonymousTypesOne();
             dataModel.anonymousTypesLinq();*/
 
-            dataModel.TupleOne();
+            // dataModel.TupleOne();
 
+            _= Task.Run(async () => {
+                ConcurrentBagExample be = new ConcurrentBagExample();
+                be.Run();
+                await Task.Delay(1000);
+                be.Stop();
+                await Task.Delay(1000);
+                Console.WriteLine(be.message.ToString());
+            });
+
+
+            _= Task.Run(() =>
+            {
+                ConcurrentBagExample be1 = new ConcurrentBagExample();
+                int count = 100;
+                while (count-- > 0)
+                {
+                    be1.NewObject();
+                }
+            });
+            
             while (Console.ReadLine() != "stop")
             {
                 Console.WriteLine("输入stop则退出222");

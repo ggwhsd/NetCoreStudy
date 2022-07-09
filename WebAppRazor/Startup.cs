@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using WebAppRazor.Middles;
 using WebAppRazor.Services;
 using WebAppRazor.Services.AuthorizonHandler;
+using WebAppRazor.ServicesBack;
 using WebAppRazor.Utils;
 
 namespace WebAppRazor
@@ -96,6 +97,7 @@ namespace WebAppRazor
             services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
             #endregion
 
+            services.AddHostedService<AutoTimerCloseWeb>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

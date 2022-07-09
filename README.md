@@ -36,6 +36,10 @@ dotnet run --project myConsoleApp
 
 弃元的使用，元组和deconstruct方法的组合使用。
 
+* myConsoleApp/ConcurrentBagExample.cs
+
+对于并发集合的示例，除了这个还有BlockingCollection，ConcurrentQueue等。
+
 
 
 
@@ -47,6 +51,7 @@ dotnet run --project myConsoleApp
 2、学习aspnetcore的组件化开发概念，通过各种组件的可插拔方式，做到满足日常的灵活搭配。
 3、登录认证、角色授权等安全基础。
 4、缓存，减少处理负载，提高访问性能。
+5、开机自启动的一个IHostService接口功能，可以写一些定时任务等。
 
 
 
