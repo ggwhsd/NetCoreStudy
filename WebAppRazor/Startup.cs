@@ -49,6 +49,8 @@ namespace WebAppRazor
             services.AddMyConfig(Configuration);
             // 在执行这行代码前，已经有两百多个服务加入进去了。
             services.AddRazorPages();
+            //添加web api
+            services.AddControllers();
             //services.AddRazorPages(options =>
             //{
             //    options.Conventions.AuthorizePage("/Index");
@@ -234,6 +236,7 @@ namespace WebAppRazor
                     var name = context.Request.RouteValues["name"];
                     await context.Response.WriteAsync($"Hello {name}!");
                 });
+                endpoints.MapDefaultControllerRoute();
 
 
             });

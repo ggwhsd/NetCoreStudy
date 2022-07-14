@@ -442,5 +442,15 @@ services.AddRazorPages(options =>
 
     </p>
 
+    <p>
+        <h2>模型绑定和模型校验<a href="https://docs.microsoft.com/zh-cn/aspnet/core/mvc/models/validation?view=aspnetcore-6.0">官网说明</a></h2>
+
+        在LoginInput中已经有使用说明。这里再单独举个web api的例子来示例：<br />
+        1、引入web api功能，需要在Startup.cs的ConfigureServices中添加services.AddControllers()，然后配置web api路由，在Startup.cs的Configure中的 app.UseEndpoints(endpoints => 添加 endpoints.MapDefaultControllerRoute(); 该路由也是MVC通用的路由。<br />
+        2、定义一个DTO的类 FuturesDTO.cs。里面对属性进行StringLength、Range等特性，这样netcore在控制器中会对请求中的数据进行模型绑定和校验。<br />
+        3、添加一个api控制器，ModelTestController.cs。<br/>
+
+    </p>
+
 </div>
 
