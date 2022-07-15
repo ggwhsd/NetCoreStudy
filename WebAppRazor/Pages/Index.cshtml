@@ -451,6 +451,42 @@ services.AddRazorPages(options =>
         3、添加一个api控制器，ModelTestController.cs。<br/>
 
     </p>
+    <p>
+        <h2>统一返回的格式</h2>
+        对于web api，如果涉及应用较多，最好统一返回的格式字段，这里包括正常的返回和各种异常返回时都得保持一个返回格式。<br />
+        <h3>第1步、 定义格式</h3>
+        定义一个ResultModel.cs。
+        <h3>第2步、 定义一个中间件</h3>
+        对于正常返回，我们只要在控制器中返回ResultModel数据格式就好。但是对于异常访问，路由可能走不到控制器中对应的Action就被异常处理了，此时需要在middleware中进行处理。
+        这里定义一个UniqueResultFormatMiddleware.cs。其中对于正常未作处理，即假设正常返回都是由接口自己完成，只对于异常情况做了统一返回。
+        <h3>第3步、注册以上middleware</h3>
+        app.UseMiddleware(typeof(UniqueResultFormatMiddleware));
+        <br />
+        此时如果输入一个不存在的路由路径，比如 http://127.0.0.1:9999/api/modeltest4 ，则会返回如下格式
+        {"ReturnCode":404,"ErrorMessage":"未知错误","Data":null,"DataIsList":false,"DataCount":0}
+        <h3>第4步、对于数据验证模型400错误的处理</h3>
+        在添加web api服务的时候直接配置模型失败后的处理逻辑，转换为ResultModel类型。这种方法较为直接简单。 还有一种通过关闭默认模型处理且添加自定义过滤器的方法，这里不介绍。
+        <pre>
+//添加web api
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            }).ConfigureApiBehaviorOptions(e => {
+                //重新定义模型验证失败后的返回格式
+                e.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    //通过Linq方式，获取验证失败的模型字段
+                    var errors = actionContext.ModelState
+                        .Where(e1 => e1.Value.Errors.Count > 0)
+                        .Select(e1 => e1.Value.Errors.First().ErrorMessage)
+                        .ToList();
+                    var str = string.Join("|", errors);
+                    return new BadRequestObjectResult((ResultModel.Error(str, 400)));
+                    // return new OkObjectResult((ResultModel.Error(str,  400)));
+                };
+            });
+</pre>
+    </p>
 
 </div>
 

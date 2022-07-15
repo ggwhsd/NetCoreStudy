@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -14,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebAppRazor.Middles;
+using WebAppRazor.Models;
 using WebAppRazor.Services;
 using WebAppRazor.Services.AuthorizonHandler;
 using WebAppRazor.ServicesBack;
@@ -50,13 +52,29 @@ namespace WebAppRazor
             // 在执行这行代码前，已经有两百多个服务加入进去了。
             services.AddRazorPages();
             //添加web api
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
+            }).ConfigureApiBehaviorOptions(e => {
+                //重新定义模型验证失败后的返回格式
+                e.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    //通过Linq方式，获取验证失败的模型字段
+                    var errors = actionContext.ModelState
+                        .Where(e1 => e1.Value.Errors.Count > 0)
+                        .Select(e1 => e1.Value.Errors.First().ErrorMessage)
+                        .ToList();
+                    var str = string.Join("|", errors);
+                    return new BadRequestObjectResult((ResultModel.Error(str, 400)));
+                    // return new OkObjectResult((ResultModel.Error(str,  400)));
+                };
+            });
             //services.AddRazorPages(options =>
             //{
             //    options.Conventions.AuthorizePage("/Index");
             //});
-                //相当于又添加了一个Startup.configure
-                services.AddTransient<IStartupFilter,
+            //相当于又添加了一个Startup.configure
+            services.AddTransient<IStartupFilter,
                       RequestSetOptionsStartupFilter>();
             services.AddTransient<IHostedService, LifetimeEventsHostedService>();
             //注入泛型
@@ -179,6 +197,7 @@ namespace WebAppRazor
 
             //启动静态文件访问方式，打开之后才可以访问wwwroot路径下的静态资源。
             app.UseStaticFiles();
+           
 
             app.UseDirectoryBrowser(new DirectoryBrowserOptions
             {
@@ -190,6 +209,8 @@ namespace WebAppRazor
 
             //启动路由，在整个http request的pipeline中合适的位置加入了路由点，结合UseEndpoings具体路由方式，
             app.UseRouting();
+            //统一返回webapi格式的自定义中间件
+            app.UseMiddleware(typeof(UniqueResultFormatMiddleware));
             app.Use(next => async context =>
             {
                 string clientIP = context.Connection.RemoteIpAddress.ToString();
