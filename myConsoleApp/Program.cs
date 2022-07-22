@@ -52,27 +52,33 @@ namespace myConsoleApp
             dataModel.anonymousTypesLinq();*/
 
             // dataModel.TupleOne();
+            /*
+                        _= Task.Run(async () => {
+                            ConcurrentBagExample be = new ConcurrentBagExample();
+                            be.Run();
+                            await Task.Delay(1000);
+                            be.Stop();
+                            await Task.Delay(1000);
+                            Console.WriteLine(be.message.ToString());
+                        });
 
-            _= Task.Run(async () => {
-                ConcurrentBagExample be = new ConcurrentBagExample();
-                be.Run();
-                await Task.Delay(1000);
-                be.Stop();
-                await Task.Delay(1000);
-                Console.WriteLine(be.message.ToString());
-            });
+
+                        _= Task.Run(() =>
+                        {
+                            ConcurrentBagExample be1 = new ConcurrentBagExample();
+                            int count = 100;
+                            while (count-- > 0)
+                            {
+                                be1.NewObject();
+                            }
+                        });
+                        */
+
+            CmdLineParserExample example = new CmdLineParserExample();
+            example.DoArgs(args);
+           // example.DoArgs_MoreEnvironment(args);
 
 
-            _= Task.Run(() =>
-            {
-                ConcurrentBagExample be1 = new ConcurrentBagExample();
-                int count = 100;
-                while (count-- > 0)
-                {
-                    be1.NewObject();
-                }
-            });
-            
             while (Console.ReadLine() != "stop")
             {
                 Console.WriteLine("输入stop则退出222");

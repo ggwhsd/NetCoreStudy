@@ -40,6 +40,10 @@ dotnet run --project myConsoleApp
 
 对于并发集合的示例，除了这个还有BlockingCollection，ConcurrentQueue等。
 
+* myConsoleApp/CmdLineParserExample.cs
+
+对命令行解析库的使用。
+
 
 
 
